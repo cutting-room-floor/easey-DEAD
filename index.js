@@ -11,4 +11,4 @@ window.addEventListener('load', function() {
         new easey.DoubleClickHandler()
     ]);
     map.setCenterZoom(new com.modestmaps.Location(33.760882, 66.137695), 4);
-});
+}, false);
