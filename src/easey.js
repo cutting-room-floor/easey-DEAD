@@ -24,12 +24,11 @@
         }, 0);
     };
 
-    easey.slowPan = function (map, x, y) {
+    easey.slowPan = function (map, x, y, duration) {
         function easeOut(t) {
-            return Math.sqrt(t);
+            return Math.sin(t * Math.PI / 2);
         }
         var start = +new Date();
-        var duration = 500;
         var zi = window.setInterval(function() {
             // use shift-double-click to zoom out
             var delta = +new Date() - start;
@@ -186,12 +185,12 @@
 
             var speed = ((+new Date()) - this.prevMouse.t) * 1;
 
-            if (isNaN(angle) || speed < 20) return;
+            if (isNaN(angle) || speed < 5) return;
 
-            var xDir = Math.cos(angle) * speed;
-            var yDir = Math.sin(angle) * speed;
+            var xDir = Math.min(50, Math.cos(angle) * speed);
+            var yDir = Math.min(50, Math.sin(angle) * speed);
 
-            easey.slowPan(this.map, xDir, yDir);
+            easey.slowPan(this.map, xDir, yDir, speed * 100);
             this.prevMouse = null;
             this.map.parent.style.cursor = '';
 
