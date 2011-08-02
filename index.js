@@ -9,6 +9,7 @@ window.addEventListener('load', function() {
             scheme: 'tms'
         }), null, [
         new easey.DoubleClickHandler(),
+        new easey.DragHandler(),
         new easey.MouseWheelHandler()
     ]);
     map.setCenterZoom(new com.modestmaps.Location(33.760882, 66.137695), 4);
