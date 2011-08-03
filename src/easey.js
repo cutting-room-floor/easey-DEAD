@@ -1,46 +1,52 @@
 (function(context, MM) {
     var easey = {};
+
+    function easeIn(t) { return t * t; }
+    function easeOut(t) { return Math.sin(t * Math.PI / 2); }
+
     easey.slowZoom = function (map, by, point) {
-        console.log(by);
-        function easeIn(t) {
-            return t * t;
-        }
-        var start = +new Date();
-        var zs = map.getZoom();
-        var zc = map.getCenter();
-        var duration = 100;
+        var start = +new Date(),
+            zs = map.getZoom(),
+            zc = map.getCenter(),
+            duration = 200,
+            zoomTotal = 0;
+
+
+        var zi = window.setInterval(function() {
+            var delta = +new Date() - start;
+
+            if (delta > duration) {
+                window.clearInterval(zi);
+                return map.setZoom(zs + by);
+            }
+
+            var thisZoom = easeIn(delta / duration) * by;
+            map.zoomByAbout(thisZoom - zoomTotal, point);
+
+            zoomTotal += thisZoom - zoomTotal;
+        }, 0);
+    };
+
+    easey.slowPan = function (map, x, y, duration) {
+        var start = +new Date(),
+            center = map.locationPoint(map.getCenter());
+
+        var centerTo = new MM.Point(
+            center.x + x,
+            center.y + y
+        );
+
         var zi = window.setInterval(function() {
             // use shift-double-click to zoom out
             var delta = +new Date() - start;
             if (delta > duration) {
                 window.clearInterval(zi);
-                map.setZoom(zs + by);
-                return;
-            }
-            var t = delta / duration;
-            // TODO: correct centerpoint
-            var zb = easeIn(t) * by;
-            map.zoomByAbout(zb, point);
-        }, 0);
-    };
-
-    easey.slowPan = function (map, x, y, duration) {
-        function easeOut(t) {
-            return Math.sin(t * Math.PI / 2);
-        }
-        var start = +new Date();
-        var zi = window.setInterval(function() {
-            // use shift-double-click to zoom out
-            var delta = +new Date() - start;
-            if (delta > duration) {
-                return window.clearInterval(zi);
+                // return map.setCenter(centerTo);
             }
 
-            var t = delta / duration;
+            var t = easeOut(delta / duration);
 
-            var xe = easeOut(t) * x;
-            var ye = easeOut(t) * y;
-            map.panBy(xe, ye);
+            map.setCenter(map.pointLocation(MM.Point.interpolate(center, centerTo, t)));
         }, 0);
     };
 
@@ -163,11 +169,8 @@
                     e.clientX - this.prevMouse.x,
                     e.clientY - this.prevMouse.y);
 
-                this.lastMouse.x = this.prevMouse.x;
-                this.lastMouse.y = this.prevMouse.y;
-
-                this.prevMouse.x = e.clientX;
-                this.prevMouse.y = e.clientY;
+                this.lastMouse = new MM.Point(this.prevMouse.x, this.prevMouse.y);
+                this.prevMouse = new MM.Point(e.clientX, e.clientY);
 
                 this.prevMouse.t = +new Date();
             }
@@ -180,17 +183,18 @@
             MM.removeEvent(document, 'mousemove', this._mouseMove);
 
             var angle = Math.atan2(
-                this.prevMouse.y - this.lastMouse.y,
-                this.prevMouse.x - this.lastMouse.x);
+                this.lastMouse.y - this.prevMouse.y,
+                this.lastMouse.x - this.prevMouse.x);
+            var distance = MM.Point.distance(this.lastMouse, this.prevMouse);
 
-            var speed = ((+new Date()) - this.prevMouse.t) * 1;
+            var speed = Math.max(2, distance / ((+new Date()) - this.prevMouse.t)) / 2;
 
             if (isNaN(angle) || speed < 5) return;
 
-            var xDir = Math.min(50, Math.cos(angle) * speed);
-            var yDir = Math.min(50, Math.sin(angle) * speed);
+            var xDir = Math.max(-50, Math.min(50, Math.cos(angle) * speed));
+            var yDir = Math.max(-50, Math.min(50, Math.sin(angle) * speed));
 
-            easey.slowPan(this.map, xDir, yDir, speed * 100);
+            easey.slowPan(this.map, xDir, yDir, 200);
             this.prevMouse = null;
             this.map.parent.style.cursor = '';
 
