@@ -4,11 +4,10 @@
     function easeIn(t) { return t * t; }
     function easeOut(t) { return Math.sin(t * Math.PI / 2); }
 
-    easey.slowZoom = function (map, by, point) {
+    easey.slowZoom = function (map, by, point, duration) {
         var start = +new Date(),
             zs = map.getZoom(),
             zc = map.getCenter(),
-            duration = 200,
             zoomTotal = 0;
 
 
