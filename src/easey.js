@@ -26,14 +26,8 @@
         }, 0);
     };
 
-    easey.slowPan = function (map, x, y, duration) {
-        var start = +new Date(),
-            center = map.locationPoint(map.getCenter());
-
-        var centerTo = new MM.Point(
-            center.x + x,
-            center.y + y
-        );
+    easey.slowPan = function (map, to, duration) {
+        var start = +new Date();
 
         var zi = window.setInterval(function() {
             // use shift-double-click to zoom out
@@ -45,7 +39,7 @@
 
             var t = easeOut(delta / duration);
 
-            map.setCenter(map.pointLocation(MM.Point.interpolate(center, centerTo, t)));
+            map.setCenter(MM.Location.interpolate(map.getCenter(), to, t));
         }, 0);
     };
 
