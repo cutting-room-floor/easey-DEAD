@@ -27,7 +27,8 @@
     };
 
     easey.slowPan = function (map, to, duration) {
-        var start = +new Date();
+        var start = +new Date(),
+            startCenter = map.getCenter();
 
         var zi = window.setInterval(function() {
             // use shift-double-click to zoom out
@@ -39,9 +40,29 @@
 
             var t = easeOut(delta / duration);
 
-            map.setCenter(MM.Location.interpolate(map.getCenter(), to, t));
+            map.setCenter(MM.Location.interpolate(startCenter, to, t));
         }, 0);
     };
+
+    easey.slowZoomPan = function (map, to, z, duration) {
+        var start = (+new Date()),
+            startZoom = map.getZoom(),
+            startCenter = map.getCenter();
+
+        var zi = window.setInterval(function() {
+            // use shift-double-click to zoom out
+            var delta = (+new Date()) - start;
+            if (delta > duration) {
+                window.clearInterval(zi); // return map.setCenter(centerTo);
+            }
+
+            var t = easeOut(delta / duration);
+            map.setCenterZoom(MM.Location.interpolate(startCenter, to, t),
+                (startZoom * (1 - t) + z * t));
+            map.draw();
+        }, 0);
+    };
+
 
     // Handle double clicks, that zoom the map in one zoom level.
     easey.DoubleClickHandler = function(map) {
