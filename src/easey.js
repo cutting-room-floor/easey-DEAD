@@ -21,8 +21,6 @@
         z = goal.zoom || startZoom;
         to = goal.pan || startCenter;
 
-        duration = duration || 2000;
-
         i = window.setInterval(function() {
             // use shift-double-click to zoom out
             var delta = (+new Date()) - start;
@@ -179,15 +177,14 @@
                 this.lastMouse.y - this.prevMouse.y,
                 this.lastMouse.x - this.prevMouse.x);
             var distance = MM.Point.distance(this.lastMouse, this.prevMouse);
-
-            var speed = Math.max(2, distance / ((+new Date()) - this.prevMouse.t)) / 2;
+            var speed = Math.min(Math.log(1 + (distance / ((+new Date()) - this.prevMouse.t))) * 90, 300);
 
             if (isNaN(angle)) return;
 
-            var now = MM.getMousePoint(e, this.map);
+            var center = this.map.coordinatePoint(this.map.coordinate);
             var pan = this.map.pointLocation(new MM.Point(
-                now.x - (Math.sin(angle) * speed),
-                now.y - (Math.cos(angle) * speed)));
+                center.x + (Math.cos(angle) * speed),
+                center.y + (Math.sin(angle) * speed)));
 
             easey.slow(this.map, {
                 pan: pan
