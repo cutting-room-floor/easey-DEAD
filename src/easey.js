@@ -188,7 +188,7 @@
 
             easey.slow(this.map, {
                 pan: pan
-            }, 200);
+            }, speed);
             this.prevMouse = null;
             this.map.parent.style.cursor = '';
 
