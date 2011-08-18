@@ -19,9 +19,10 @@
     body {
       background:#261d22;
       }
-    html, body, pre, h1, h2, h3 {
+    html, body, pre, h1, h2, h3, p {
       margin:0;padding:0;
     }
+    a { color: #8c0f26; }
     h1 {
       color:#fff;
       width:580px;
@@ -29,6 +30,13 @@
       font-size:30px;
       line-height:40px;
     }
+    p.intro {
+      padding:10px;
+      margin-bottom:20px;
+      border-left:2px solid #756159;
+      width:498px;
+      background:#bfa59b;
+      }
     #map {
       background:#594d51;
       width:600px;
@@ -83,6 +91,10 @@
   <h1>easey</h1>
   <div id='map'></div>
   <div class='right'>
+
+  <p class='intro'><strong>easey</strong> is an easing library for
+    <a href='http://github.com/stamen/modestmaps-js'>Modest Maps</a> that
+    makes your map transitions slick and fancy</p>
 
   <div class='codeblock'>
     <button>run</button>

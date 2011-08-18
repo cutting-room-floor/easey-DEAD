@@ -1,10 +1,13 @@
 (function(context, MM) {
-    var easey = {};
+    var easey = {},
+        i; // the interval!
 
     function easeIn(t) { return t * t; }
     function easeOut(t) { return Math.sin(t * Math.PI / 2); }
 
     easey.slow = function(map, goal, duration) {
+        if (i) { window.clearInterval(i); }
+
         var start = (+new Date()),
             startZoom = map.getZoom(),
             startCenter = map.getCenter();
@@ -20,12 +23,12 @@
 
         duration = duration || 2000;
 
-        var zi = window.setInterval(function() {
+        i = window.setInterval(function() {
             // use shift-double-click to zoom out
             var delta = (+new Date()) - start;
             if (delta > duration) {
                 map.setZoom(z);
-                return window.clearInterval(zi);
+                return window.clearInterval(i);
             }
 
             var t = easeOut(delta / duration);
