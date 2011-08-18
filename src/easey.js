@@ -60,11 +60,14 @@
             if (!this.doubleClickHandler) {
                 var theHandler = this;
                 this.doubleClickHandler = function(e) {
-                    // Get the point on the map that was double-clicked
-                    var point = MM.getMousePoint(e, theHandler.map);
-                    var n = 0;
+                    var map = theHandler.map,
+                        point = map.pointLocation(MM.getMousePoint(e, map)),
+                        z = map.getZoom() + (e.shiftKey ? -1 : 1);
 
-                    easey.slowZoom(theHandler.map, (e.shiftKey ? -1 : 1), point);
+                    easey.slow(map, {
+                        zoom: z,
+                        pan: point
+                    }, 200);
 
                     return MM.cancelEvent(e);
                 };
@@ -108,8 +111,13 @@
                     var timeSince = new Date().getTime() - prevTime;
 
                     if (Math.abs(delta) > 0 && (timeSince > 200)) {
-                        var point = MM.getMousePoint(e, theHandler.map);
-                        easey.slowZoom(theHandler.map, delta > 0 ? 1 : -1, point);
+                        var map = theHandler.map,
+                            point = map.pointLocation(MM.getMousePoint(e, map)),
+                            z = map.getZoom();
+                        easey.slow(map, {
+                            zoom: z + (delta > 0 ? 1 : -1),
+                            pan: point
+                        }, 100);
 
                         prevTime = new Date().getTime();
                     }
@@ -140,8 +148,8 @@
             MM.addEvent(document, 'mouseup', this._mouseUp = MM.bind(this.mouseUp, this));
             MM.addEvent(document, 'mousemove', this._mouseMove = MM.bind(this.mouseMove, this));
 
-            this.lastMouse = new MM.Point(e.clientX, e.clientY);
-            this.prevMouse = new MM.Point(e.clientX, e.clientY);
+            this.lastMouse = MM.getMousePoint(e, this.map)
+            this.prevMouse = MM.getMousePoint(e, this.map)
             this.map.parent.style.cursor = 'move';
 
             return MM.cancelEvent(e);
@@ -149,12 +157,13 @@
 
         mouseMove: function(e) {
             if (this.prevMouse) {
+                var nextMouse = MM.getMousePoint(e, this.map);
                 this.map.panBy(
-                    e.clientX - this.prevMouse.x,
-                    e.clientY - this.prevMouse.y);
+                    nextMouse.x - this.prevMouse.x,
+                    nextMouse.y - this.prevMouse.y);
 
                 this.lastMouse = new MM.Point(this.prevMouse.x, this.prevMouse.y);
-                this.prevMouse = new MM.Point(e.clientX, e.clientY);
+                this.prevMouse = MM.getMousePoint(e, this.map);
 
                 this.prevMouse.t = +new Date();
             }
@@ -173,12 +182,16 @@
 
             var speed = Math.max(2, distance / ((+new Date()) - this.prevMouse.t)) / 2;
 
-            if (isNaN(angle) || speed < 5) return;
+            if (isNaN(angle)) return;
 
-            var xDir = Math.max(-50, Math.min(50, Math.cos(angle) * speed));
-            var yDir = Math.max(-50, Math.min(50, Math.sin(angle) * speed));
+            var now = MM.getMousePoint(e, this.map);
+            var pan = this.map.pointLocation(new MM.Point(
+                now.x - (Math.sin(angle) * speed),
+                now.y - (Math.cos(angle) * speed)));
 
-            easey.slowPan(this.map, xDir, yDir, 200);
+            easey.slow(this.map, {
+                pan: pan
+            }, 200);
             this.prevMouse = null;
             this.map.parent.style.cursor = '';
 
