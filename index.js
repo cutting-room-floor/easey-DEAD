@@ -6,7 +6,7 @@ $.domReady(function() {
         new wax.mm.connector({
             tiles: ['http://a.tiles.mapbox.com/mapbox/1.0.0/world-glass/{z}/{x}/{y}.png'],
             scheme: 'tms'
-        }), null, []);
+        }), new mm.Point(600, 600));
     map.setCenterZoom(new com.modestmaps.Location(30, -90), 4);
 
     $('button').click(function(b) {
