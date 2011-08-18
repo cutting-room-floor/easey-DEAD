@@ -4,65 +4,36 @@
     function easeIn(t) { return t * t; }
     function easeOut(t) { return Math.sin(t * Math.PI / 2); }
 
-    easey.slowZoom = function (map, by, point, duration) {
-        var start = +new Date(),
-            zs = map.getZoom(),
-            zc = map.getCenter(),
-            zoomTotal = 0;
-
-
-        var zi = window.setInterval(function() {
-            var delta = +new Date() - start;
-
-            if (delta > duration) {
-                window.clearInterval(zi);
-                return map.setZoom(zs + by);
-            }
-
-            var thisZoom = easeIn(delta / duration) * by;
-            map.zoomByAbout(thisZoom - zoomTotal, point);
-
-            zoomTotal += thisZoom - zoomTotal;
-        }, 0);
-    };
-
-    easey.slowPan = function (map, to, duration) {
-        var start = +new Date(),
-            startCenter = map.getCenter();
-
-        var zi = window.setInterval(function() {
-            // use shift-double-click to zoom out
-            var delta = +new Date() - start;
-            if (delta > duration) {
-                window.clearInterval(zi);
-                // return map.setCenter(centerTo);
-            }
-
-            var t = easeOut(delta / duration);
-
-            map.setCenter(MM.Location.interpolate(startCenter, to, t));
-        }, 0);
-    };
-
-    easey.slowZoomPan = function (map, to, z, duration) {
+    easey.slow = function(map, goal, duration) {
         var start = (+new Date()),
             startZoom = map.getZoom(),
             startCenter = map.getCenter();
+
+        if (typeof goal === 'number') {
+            goal = { zoom: goal };
+        } else if (goal.lat && typeof goal.lat === 'number') {
+            goal = { pan: goal };
+        }
+
+        z = goal.zoom || startZoom;
+        to = goal.pan || startCenter;
+
+        duration = duration || 2000;
 
         var zi = window.setInterval(function() {
             // use shift-double-click to zoom out
             var delta = (+new Date()) - start;
             if (delta > duration) {
-                window.clearInterval(zi); // return map.setCenter(centerTo);
+                map.setZoom(z);
+                return window.clearInterval(zi);
             }
 
             var t = easeOut(delta / duration);
             map.setCenterZoom(MM.Location.interpolate(startCenter, to, t),
-                (startZoom * (1 - t) + z * t));
+                z == startZoom ? z : (startZoom * (1 - t) + z * t));
             map.draw();
         }, 0);
     };
-
 
     // Handle double clicks, that zoom the map in one zoom level.
     easey.DoubleClickHandler = function(map) {
@@ -98,8 +69,6 @@
             return this.doubleClickHandler;
         }
     };
-
-
 
     // A handler that allows mouse-wheel zooming - zooming in
     // when page would scroll up, and out when the page would scroll down.
@@ -149,8 +118,6 @@
             return this.mouseWheelHandler;
         }
     };
-
-
 
     // Handle the use of mouse dragging to pan the map.
     easey.DragHandler = function(map) {

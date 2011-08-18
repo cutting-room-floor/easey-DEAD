@@ -1,16 +1,15 @@
 var map, madden;
 
-window.addEventListener('load', function() {
-
+$.domReady(function() {
     var mm = com.modestmaps,
     map = new com.modestmaps.Map('map',
         new wax.mm.connector({
-            tiles: ['http://a.tiles.mapbox.com/mapbox/1.0.0/world-light/{z}/{x}/{y}.png'],
+            tiles: ['http://a.tiles.mapbox.com/mapbox/1.0.0/world-glass/{z}/{x}/{y}.png'],
             scheme: 'tms'
-        }), null, [
-        new easey.DoubleClickHandler(),
-        new easey.DragHandler(),
-        new easey.MouseWheelHandler()
-    ]);
-    map.setCenterZoom(new com.modestmaps.Location(33.760882, 66.137695), 4);
-}, false);
+        }), null, []);
+    map.setCenterZoom(new com.modestmaps.Location(30, -90), 4);
+
+    $('button').click(function(b) {
+        eval($('pre', this.parentNode).text());
+    });
+});
