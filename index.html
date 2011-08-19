@@ -97,39 +97,53 @@
 
   <div class='codeblock'>
     <button>run</button>
-    <pre class='run'>easey.slow(map, new mm.Location(10, 10), 1000);</pre>
+    <pre class='run'>(function a() { easey.slow(map, {
+      point: new mm.Point(600, 300),
+      callback: a,
+      ease: 'linear'
+      }) })();</pre>
   </div>
 
   <div class='codeblock'>
     <button>run</button>
-    <pre class='run'>easey.slow(map, new mm.Location(10, 50), 2000);</pre>
+    <pre class='run'>easey.cancel();</pre>
+  </div>
+
+  <div class='codeblock'>
+    <button>run</button>
+    <pre class='run'>easey.slow(map, new mm.Location(10, 10));</pre>
+  </div>
+
+  <div class='codeblock'>
+    <button>run</button>
+    <pre class='run'>easey.slow(map, new mm.Location(10, 50));</pre>
   </div>
 
   <div class='codeblock'>
     <button>run</button>
     <pre class='run'>easey.slow(map,
-    { pan: new mm.Location(
+    { location: new mm.Location(
       (Math.random() - 0.5) * 90,
       (Math.random() - 0.5) * 180),
-      zoom: ~~(Math.random() * 5) },
-      2000);</pre>
+      zoom: ~~(Math.random() * 5),
+      time: 2000 });</pre>
   </div>
 
   <div class='codeblock'>
     <button>run</button>
     <pre class='run'>easey.slow(map,
-    { pan: new mm.Location(5, 20),
-      zoom: 5 },
-      2000);</pre>
+    { location: new mm.Location(5, 20),
+      zoom: 5 });</pre>
   </div>
 
   <div class='codeblock'>
     <button>run</button>
     <pre class='run'>easey.slow(map,
-    { pan: new mm.Location(15, 50),
-      zoom: 2 },
-      1000);</pre>
+    { location: new mm.Location(15, 50),
+      zoom: 2,
+      time: 1000 });</pre>
   </div>
+
 </div>
   <script src='index.js' type='text/javascript'></script>
 
