@@ -12,6 +12,19 @@
         if (i) { window.clearInterval(i); }
     };
 
+    easey.sequence = function(map, steps) {
+        for (var i = 0; i < (steps.length - 1); i++) {
+            if (steps[i].callback) var c = steps[i].callback;
+            steps[i].callback = (function(j, c) {
+                return function() {
+                    if (c) c();
+                    easey.slow(map, steps[j])
+                }
+            })(i + 1, c);
+        }
+        return easey.slow(map, steps[0]);
+    };
+
     easey.slow = function(map, options) {
         if (i) { window.clearInterval(i); }
 

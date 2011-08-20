@@ -13,7 +13,7 @@
   <script src='ext/wax.mm.js' type='text/javascript'></script>
   <style>
     body, button {
-      font:15px/20px "Helvetica Neue", "Helvetica", sans-serif;
+      font:13px/15px "Helvetica Neue", "Helvetica", sans-serif;
     }
     body {
       background:#261d22;
@@ -96,56 +96,63 @@
     makes your map transitions slick and fancy</p>
 
   <div class='codeblock'>
-    <button>run</button>
-    <pre class='run'>(function a() { easey.slow(map, {
-      point: new mm.Point(600, 300),
-      callback: a,
-      ease: 'linear'
-      }) })();</pre>
-  </div>
-
-  <div class='codeblock'>
-    <button>run</button>
-    <pre class='run'>easey.cancel();</pre>
-  </div>
-
-  <div class='codeblock'>
-    <button>run</button>
-    <pre class='run'>easey.slow(map, new mm.Location(10, 10));</pre>
-  </div>
-
-  <div class='codeblock'>
-    <button>run</button>
+    <button>►</button>
     <pre class='run'>easey.slow(map, new mm.Location(10, 50));</pre>
   </div>
 
   <div class='codeblock'>
-    <button>run</button>
-    <pre class='run'>easey.slow(map,
-    { location: new mm.Location(
-      (Math.random() - 0.5) * 90,
-      (Math.random() - 0.5) * 180),
-      zoom: ~~(Math.random() * 5),
-      time: 2000 });</pre>
+    <button>►</button>
+    <pre class='run'>
+easey.slow(map, {
+  location: new mm.Location(
+  (Math.random() - 0.5) * 90,
+  (Math.random() - 0.5) * 180),
+  zoom: ~~(Math.random() * 5),
+  time: 2000 });</pre>
   </div>
 
   <div class='codeblock'>
-    <button>run</button>
-    <pre class='run'>easey.slow(map,
-    { location: new mm.Location(5, 20),
-      zoom: 5 });</pre>
+    <button>►</button>
+    <pre class='run'>
+(function a() {
+  easey.slow(map, {
+  point: new mm.Point(600, 300), callback: a, ease: 'linear'
+  })
+})();</pre>
   </div>
 
   <div class='codeblock'>
-    <button>run</button>
-    <pre class='run'>easey.slow(map,
-    { location: new mm.Location(15, 50),
-      zoom: 2,
-      time: 1000 });</pre>
+    <button>►</button>
+    <pre class='run'>easey.cancel();</pre>
+  </div>
+
+  <div class='codeblock'>
+    <button>►</button>
+    <pre class='run'>
+(function a() {
+  easey.slow(map, {
+  point: new mm.Point(600, 300), callback: a, ease: 'linear'
+  })
+})();</pre>
+  </div>
+
+  <div class='codeblock'>
+    <button>►</button>
+    <pre class='run'>
+easey.sequence(map, [{
+    location: new mm.Location(10, 15), ease: 'linear'
+  }, {
+    location: new mm.Location(20, -15), ease: 'linear'
+  }, {
+    location: new mm.Location(30, 15), ease: 'linear',
+    callback: function() { alert('three!'); }
+  }, {
+    location: new mm.Location(40, -15), ease: 'linear'
+  }]);
+</pre>
   </div>
 
 </div>
-  <script src='index.js' type='text/javascript'></script>
-
+<script src='index.js' type='text/javascript'></script>
 </body>
 </html>
