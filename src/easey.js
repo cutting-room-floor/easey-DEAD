@@ -14,12 +14,12 @@
 
     easey.sequence = function(map, steps) {
         for (var i = 0; i < (steps.length - 1); i++) {
-            if (steps[i].callback) var c = steps[i].callback;
-            steps[i].callback = (function(j, c) {
+            var c = steps[i].callback || function() {};
+            steps[i].callback = (function(j, ca) {
                 return function() {
-                    if (c) c();
-                    easey.slow(map, steps[j])
-                }
+                    if (ca) ca();
+                    easey.slow(map, steps[j]);
+                };
             })(i + 1, c);
         }
         return easey.slow(map, steps[0]);
@@ -186,8 +186,8 @@
             MM.addEvent(document, 'mouseup', this._mouseUp = MM.bind(this.mouseUp, this));
             MM.addEvent(document, 'mousemove', this._mouseMove = MM.bind(this.mouseMove, this));
 
-            this.lastMouse = MM.getMousePoint(e, this.map)
-            this.prevMouse = MM.getMousePoint(e, this.map)
+            this.lastMouse = MM.getMousePoint(e, this.map);
+            this.prevMouse = MM.getMousePoint(e, this.map);
             this.map.parent.style.cursor = 'move';
 
             return MM.cancelEvent(e);

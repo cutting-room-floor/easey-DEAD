@@ -1,0 +1,21 @@
+{
+    "name": "easey",
+    "version": "0.0.1",
+    "description": "Easing for Modest Maps",
+    "author": {
+        "name": "MapBox",
+        "url": "http://mapbox.com/",
+        "email": "info@mapbox.com"
+    },
+    "contributors": [
+        "Tom MacWright <macwright@gmail.com>",
+        "Young Hahn <young@developmentseed.org>"
+    ],
+    "licenses": [{
+      "type": "BSD"
+    }],
+    "devDependencies": {
+      "jshint": "0.2.3",
+      "uglify-js": "1.0.x"
+    }
+}
