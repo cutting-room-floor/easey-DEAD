@@ -25,6 +25,10 @@
         return easey.slow(map, steps[0]);
     };
 
+    easey.cancel = function() {
+        if (i) { window.clearInterval(i); }
+    };
+
     easey.slow = function(map, options) {
         if (i) { window.clearInterval(i); }
 
