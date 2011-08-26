@@ -5,6 +5,10 @@
     function easeIn(t) { return t * t; }
     function easeOut(t) { return Math.sin(t * Math.PI / 2); }
 
+    easey.cancel = function() {
+        if (i) { window.clearInterval(i); }
+    };
+
     easey.slow = function(map, goal, duration) {
         if (i) { window.clearInterval(i); }
 
