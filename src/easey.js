@@ -58,7 +58,6 @@
             // use shift-double-click to zoom out
             var delta = (+new Date()) - start;
             if (delta > time) {
-                console.log('done');
                 map.setZoom(z);
                 window.clearInterval(i);
                 return callback();
