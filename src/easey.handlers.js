@@ -22,13 +22,14 @@
                 var theHandler = this;
                 this.doubleClickHandler = function(e) {
                     var map = theHandler.map,
-                    point = map.pointLocation(MM.getMousePoint(e, map)),
+                    point = MM.getMousePoint(e, map),
                     z = map.getZoom() + (e.shiftKey ? -1 : 1);
 
                     easey.slow(map, {
                         zoom: z,
-                        pan: point
-                    }, 200);
+                        about: point,
+                        time: 200
+                    });
 
                     return MM.cancelEvent(e);
                 };
@@ -68,17 +69,26 @@
                         delta = -e.detail;
                     }
 
-                    // limit mousewheeling to once every 200ms
                     var timeSince = new Date().getTime() - prevTime;
 
-                    if (Math.abs(delta) > 0 && (timeSince > 200)) {
-                        var map = theHandler.map,
-                        point = map.pointLocation(MM.getMousePoint(e, map)),
-                        z = map.getZoom();
-                        easey.slow(map, {
-                            zoom: z + (delta > 0 ? 1 : -1),
-                            pan: point
-                        }, 100);
+                    if (Math.abs(delta) > 0 && (timeSince > 100)) {
+
+                        if (easey.running()) {
+                          easey.set({
+                            time:300,
+                            zoom:z + (delta > 0 ? 1 : -1)
+                          });
+                        } else {
+                          var map = theHandler.map,
+                          point = MM.getMousePoint(e, map),
+                          z = map.getZoom();
+                          easey.slow(map, {
+                              zoom: z + (delta > 0 ? 1 : -1),
+                              about: point,
+                              ease: 'linear',
+                              time:300
+                          });
+                        }
 
                         prevTime = new Date().getTime();
                     }

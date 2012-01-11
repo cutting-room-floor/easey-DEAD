@@ -1,5 +1,6 @@
 (function(context, MM) {
     var easey = {},
+        running = false,
         abort = false; // killswitch for transitions
 
     var easings = {
@@ -124,6 +125,16 @@
         return easey.slow(map, steps[0]);
     };
 
+    easey.running = function() {
+        return running;
+    }
+
+    easey.set = function(o) {
+        if (o.z) z = o.z;
+        if (o.time) time = o.time;
+        return running;
+    };
+
     // Basic layout:
     // if you just provide data, easey
     // will assume
@@ -137,6 +148,8 @@
             startCenter = map.getCenter(),
             startCoordinate = map.coordinate.copy();
 
+        running = true;
+
         // Easy-mode options. These preclude setting
         // any other options.
         if (typeof options === 'number') {
@@ -149,6 +162,8 @@
 
         if (options.point) {
             options.coordinate = map.pointCoordinate(options.point);
+        } else if (options.about) {
+            options.about_location = map.pointLocation(options.about);
         }
 
         z = options.zoom || startZoom;
@@ -159,8 +174,9 @@
         function tick() {
             var delta = (+new Date()) - start;
             if (abort) {
-                return void (abort = false);
+                return void (abort = running = false);
             } else if (delta > time) {
+                running = false;
                 map.setZoom(z);
                 return callback();
             } else {
@@ -181,6 +197,10 @@
                     (a.row * (1 - t)) +    (b.row * t),
                     (a.column * (1 - t)) + (b.column * t),
                     tz);
+            } else if (options.about) {
+                map.coordinate = map.coordinate.zoomTo(tz);
+                var np = map.locationPoint(options.about_location);
+                map.panBy(options.about.x - np.x, options.about.y - np.y);
             }
             map.draw();
         }
