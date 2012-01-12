@@ -7,6 +7,7 @@ window.onload = function() {
         map = new com.modestmaps.Map('map',
             new wax.mm.connector(tj), null, [
                 new easey.DragHandler(),
+                new easey.TouchHandler(),
                 new easey.DoubleClickHandler(),
                 new easey.MouseWheelHandler()
             ]);
