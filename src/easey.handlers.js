@@ -9,16 +9,50 @@
     easey.TouchHandler.prototype = {
 
       init: function(map, options) {
-            var maxTapTime = 250,
+            var prevT = 0,
+                acceleration = 25.0,
+                speed = null,
+                maxTapTime = 250,
                 maxTapDistance = 30,
                 maxDoubleTapDelay = 350,
+                drag = 0.10,
                 locations = {},
                 taps = [],
                 wasPinching = false,
+                nowPoint = null,
+                oldPoint = null,
+                lastMove = null,
                 lastPinchCenter = null;
 
-            this.map = map;
             options = options || {};
+
+            function animate(t) {
+                var dir = { x: 0, y: 0 };
+                var dt = Math.max(0.001,(t - prevT) / 1000.0);
+                if (nowPoint && oldPoint &&
+                    (lastMove > (+new Date() - 50))) {
+                    dir.x = nowPoint.x - oldPoint.x;
+                    dir.y = nowPoint.y - oldPoint.y;
+                    speed.x = dir.x;
+                    speed.y = dir.y;
+                } else {
+                    speed.x -= speed.x * drag;
+                    speed.y -= speed.y * drag;
+                    if (Math.abs(speed.x) < 0.001) {
+                        speed.x = 0;
+                    }
+                    if (Math.abs(speed.y) < 0.001) {
+                        speed.y = 0;
+                    }
+                }
+                if (speed.x || speed.y) {
+                    map.panBy(speed.x, speed.y);
+                }
+                prevT = t;
+                // tick every frame for time-based anim accuracy
+                MM.getFrame(animate);
+            }
+
 
             // Test whether touches are from the same source -
             // whether this is the same touchmove event.
@@ -68,6 +102,7 @@
             }
 
             // Fail early if this isn't a touch device.
+            // TODO: move to add fn
             if (!isTouchable()) return false;
 
             MM.addEvent(map.parent, 'touchstart',
@@ -79,6 +114,10 @@
 
             options = {};
             options.snapToZoom = options.snapToZoom || true;
+
+            prevT = new Date().getTime();
+            speed = { x: 0, y: 0 };
+            MM.getFrame(animate);
             
             // Handle a tap event - mainly watch for a doubleTap
             function onTap(tap) {
@@ -123,9 +162,10 @@
             
             // Re-transform the actual map parent's CSS transformation
             function onPanning(touch) {
-                var pos = { x: touch.screenX, y: touch.screenY },
-                    prev = locations[touch.identifier];
-                map.panBy(pos.x - prev.x, pos.y - prev.y);
+                lastMove = +new Date();
+                oldPoint = nowPoint;
+                nowPoint = { x: touch.screenX, y: touch.screenY };
+                // oldPoint = locations[touch.identifier];
             }
 
             function onPinching(e) {
@@ -147,7 +187,7 @@
                 map.zoomByAbout(
                     Math.log(e.scale) / Math.LN2 -
                     Math.log(l0.scale) / Math.LN2,
-                    center );
+                    center);
 
                 // pan from the previous center of these touches
                 var prevCenter = MM.Point.interpolate(l0, l1, 0.5);
@@ -175,6 +215,8 @@
                 if (e.touches.length === 0 && wasPinching) {
                     onPinched(lastPinchCenter);
                 }
+
+                oldPoint = nowPoint = null;
 
                 // Look at each changed touch in turn.
                 for (var i = 0; i < e.changedTouches.length; i += 1) {
@@ -339,7 +381,6 @@
                 acceleration = 25.0,
                 speed = null,
                 drag = 0.10,
-                minSpeed = 0.08,
                 lastMove = null,
                 mouseDownPoint = null,
                 mousePoint = null,
@@ -366,16 +407,9 @@
 
             function animate(t) {
                 var dir = { x: 0, y: 0 };
-
                 var dt = Math.max(0.001,(t - prevT) / 1000.0);
-                if (dir.x || dir.y) {
-                    var len = Math.sqrt(dir.x*dir.x + dir.y*dir.y);
-                    dir.x /= len;
-                    dir.y /= len;
-                    this.speed.x += dir.x * acceleration * dt;
-                    this.speed.y += dir.y * acceleration * dt;
-                }
-                else if (mousePoint && prevMousePoint && (lastMove > (+new Date() - 50))) {
+                if (mousePoint && prevMousePoint &&
+                    (lastMove > (+new Date() - 50))) {
                     dir.x = mousePoint.x - prevMousePoint.x;
                     dir.y = mousePoint.y - prevMousePoint.y;
                     speed.x = dir.x;
