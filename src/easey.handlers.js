@@ -61,7 +61,6 @@
                     (touch.identifier == event.touch.identifier);
             }
 
-            
             function updateTouches (e) {
                 for (var i = 0; i < e.touches.length; i += 1) {
                     var t = e.touches[i];
@@ -118,7 +117,7 @@
             prevT = new Date().getTime();
             speed = { x: 0, y: 0 };
             MM.getFrame(animate);
-            
+
             // Handle a tap event - mainly watch for a doubleTap
             function onTap(tap) {
                 if (taps.length &&
@@ -159,7 +158,6 @@
                     touchEndMachine);
             }
 
-            
             // Re-transform the actual map parent's CSS transformation
             function onPanning(touch) {
                 lastMove = +new Date();
@@ -269,8 +267,6 @@
         }
     };
 
-
-
     // Handle double clicks, that zoom the map in one zoom level.
     easey.DoubleClickHandler = function(map) {
         if (map !== undefined) {
@@ -294,14 +290,11 @@
                 var theHandler = this;
                 this.doubleClickHandler = function(e) {
                     var map = theHandler.map,
-                    point = MM.getMousePoint(e, map),
                     z = map.getZoom() + (e.shiftKey ? -1 : 1);
 
-                    easey.slow(map, {
-                        zoom: z,
-                        about: point,
-                        time: 100
-                    });
+                    easey.map(map)
+                        .to(map.pointCoordinate(MM.getMousePoint(e, map)).zoomTo(z))
+                        .path('about').time(100).run();
 
                     return MM.cancelEvent(e);
                 };
@@ -345,21 +338,17 @@
 
                     if (Math.abs(delta) > 0 && (timeSince > 50)) {
 
-                        if (easey.running()) {
-                          easey.set({
-                            time:200,
-                            zoom:z + (delta > 0 ? 1 : -1)
-                          });
-                        } else {
+                        if (!easey.running()) {
                           var map = theHandler.map,
                           point = MM.getMousePoint(e, map),
                           z = map.getZoom();
-                          easey.slow(map, {
-                              zoom: z + (delta > 0 ? 1 : -1),
-                              about: point,
-                              ease: 'linear',
-                              time:200
-                          });
+                          easey.map(map)
+                            .to(map.pointCoordinate(MM.getMousePoint(e, map)).zoomTo(
+                            z + (delta > 0 ? 1 : -1)
+                            ))
+                            .path('about').time(200).run();
+                        } else {
+                            easey.zoom(easey.to().zoom + (delta > 0 ? 1 : -1));
                         }
 
                         prevTime = new Date().getTime();
@@ -378,9 +367,8 @@
     easey.DragHandler.prototype = {
         init: function(map) {
             var prevT = 0,
-                acceleration = 25.0,
                 speed = null,
-                drag = 0.10,
+                drag = 0.25,
                 lastMove = null,
                 mouseDownPoint = null,
                 mousePoint = null,
@@ -407,7 +395,7 @@
 
             function animate(t) {
                 var dir = { x: 0, y: 0 };
-                var dt = Math.max(0.001,(t - prevT) / 1000.0);
+                var dt = Math.max(0.001, (t - prevT) / 1000.0);
                 if (mousePoint && prevMousePoint &&
                     (lastMove > (+new Date() - 50))) {
                     dir.x = mousePoint.x - prevMousePoint.x;
@@ -428,17 +416,15 @@
                     map.panBy(speed.x, speed.y);
                 }
                 prevT = t;
-                // tick every frame for time-based anim accuracy
                 MM.getFrame(animate);
             }
 
             MM.addEvent(map.parent, 'click', function(e) {
-              map.parent.focus();
+                map.parent.focus();
             });
             MM.addEvent(map.parent, 'mousedown', mouseDown);
             MM.addEvent(map.parent, 'mousemove', mouseMove);
             MM.addEvent(map.parent, 'mouseup', mouseUp);
-            // tick every frame for time-based anim
             prevT = new Date().getTime();
             speed = { x: 0, y: 0 };
             MM.getFrame(animate);

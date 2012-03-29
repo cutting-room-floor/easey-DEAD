@@ -2,19 +2,15 @@ var map;
 
 window.onload = function() {
     var mm = com.modestmaps;
-    wax.tilejson('http://a.tiles.mapbox.com/v3/mapbox.world-bright.jsonp',
+    var dmap = document.getElementById('map');
+    wax.tilejson('http://a.tiles.mapbox.com/v3/mapbox.mapbox-streets.jsonp',
         function(tj) {
-        map = new com.modestmaps.Map('map',
+        map = new com.modestmaps.Map(dmap,
             new wax.mm.connector(tj), null, [
                 new easey.DragHandler(),
-                new easey.TouchHandler(),
-                new easey.DoubleClickHandler(),
-                new easey.MouseWheelHandler()
+                new easey.MouseWheelHandler(),
+                new easey.DoubleClickHandler()
             ]);
-        map.setCenterZoom(new com.modestmaps.Location(30, -90), 4);
-    });
-
-    $('button').click(function(b) {
-        eval($('pre', this.parentNode).text());
+        map.setCenterZoom(new com.modestmaps.Location(-10, 50), 3);
     });
 };

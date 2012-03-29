@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
@@ -12,73 +11,7 @@
   <script src='src/easey.handlers.js' type='text/javascript'></script>
   <script src='ext/ender.js' type='text/javascript'></script>
   <script src='ext/wax.mm.min.js' type='text/javascript'></script>
-  <style>
-    body, button {
-      font:13px/20px "Helvetica Neue", "Helvetica", sans-serif;
-    }
-    body {
-      background:#9098a1;
-    }
-    html, body, pre, h1, h2, h3, p {
-      margin:0;padding:0;
-    }
-    a { color: #A50B00; }
-    div.intro {
-      padding:10px;
-      margin-bottom:20px;
-      border:1px solid #000;
-      background:#fff;
-    }
-    #map {
-      background:#556270;
-      position:absolute;
-      top:0;
-      right:0;
-      left:0;
-      bottom:0;
-    }
-
-    div.right {
-      width:500px;
-      position:absolute;
-      right:5px;
-      top:5px;
-      }
-    pre {
-      overflow:auto;
-      }
-
-    div.codeblock {
-      background:#fff;
-      padding:10px;
-      width:448px;
-      margin-bottom:10px;
-    }
-
-    div.codeblock button {
-      background:#c44d58;
-      color:#fff;
-      float:right;
-      border:0;
-      font-size:8px;
-      padding:2px;
-      }
-
-    div.codeblock button:hover {
-      background:#BE0023;
-      }
-
-    h1 a.small {
-      font-size:12px;
-      color:#eee;
-      vertical-align:middle;
-      text-decoration:none;
-      }
-
-    #codes {
-      display:none;
-      }
-  </style>
+  <link href='site.css' type='text/css' rel='stylesheet' />
 </head>
 <body>
   <div id='map'></div>
@@ -96,71 +29,6 @@
     and do cool things with it.</p>
 
   </div>
-
-  <div id='codes'>
-    <div class='codeblock'>
-      <button>►</button>
-      <pre class='run'>easey.slow(map, new mm.Location(10, 50));</pre>
-    </div>
-
-    <div class='codeblock'>
-      <button>►</button>
-      <pre class='run'>
-  // Go somewhere random in the world. This shows off easey's
-  // main options:
-  //  location: a com.modestmaps.Location for a place in the world
-  //    easey gets you there, along a great arc. If you provide it
-  //    with coordinate: or point: instead (with modestmaps objects),
-  //    it'll do non-geographical transforms instead.
-  // zoom: this one writes itself
-  // time: a number of milliseconds for the map movement to take.
-  easey.slow(map, {
-    location: new mm.Location(
-    (Math.random() - 0.5) * 90,
-    (Math.random() - 0.5) * 180),
-    zoom: ~~(Math.random() * 5),
-    time: 2000 });</pre>
-    </div>
-
-    <div class='codeblock'>
-      <button>►</button>
-      <pre class='run'>
-  // Functions take a callback parameter. Here it's pointed
-  // to the function that panned the map in the first place, a, so
-  // this map will keep panning.
-  // The next example will stop the movement.
-  (function a() {
-    easey.slow(map, {
-    point: new mm.Point(600, 300), callback: a, ease: 'linear'
-    })
-  })();</pre>
-    </div>
-
-    <div class='codeblock'>
-      <button>►</button>
-      <pre class='run'>easey.cancel();</pre>
-    </div>
-
-    <div class='codeblock'>
-      <button>►</button>
-      <pre class='run'>
-  // Instead of calling easey.slow(map, options), you can also call
-  // easey.sequence(map, [options, options, ...]), and it'll cycle
-  // through each, in order.
-  easey.sequence(map, [{
-      location: new mm.Location(10, 15), ease: 'linear'
-    }, {
-      location: new mm.Location(20, -15), ease: 'linear'
-    }, {
-      location: new mm.Location(30, 15), ease: 'linear',
-      callback: function() { alert('three!'); }
-    }, {
-      location: new mm.Location(40, -15), ease: 'linear'
-    }]);
-  </pre>
-    </div>
-  </div>
-
 </div>
 <script src='index.js' type='text/javascript'></script>
 <script type="text/javascript">

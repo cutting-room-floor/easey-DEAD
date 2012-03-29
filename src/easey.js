@@ -9,167 +9,126 @@
         linear: function(t) { return t; }
     };
 
-    // From the implementation in Modest Maps by Tom Carden
-    // From "Smooth and efficient zooming and panning"
-    // by Jarke J. van Wijk and Wim A.A. Nuij
+    // to is the singular coordinate that any transition is based off
+    // three dimensions:
     //
-    // You only need to understand section 3 (equations 1 through 5)
-    // and then you can skip to equation 9, implemented below:
-    function sq(n) {
-        return Math.pow(n, 2);
-    }
+    // * to
+    // * time
+    // * path
+    var from, to, map;
 
-    function cosh(x) {
-        return (Math.pow(Math.E,x) + Math.pow(Math.E,-x)) / 2;
-    }
-    function sinh(x) {
-        return (Math.pow(Math.E,x) - Math.pow(Math.E,-x)) / 2;
-    }
-    function tanh(x) {
-        return sinh(x) / cosh(x);
-    }
-
-    // Interpolate two xy coordinates, the usual way.
-    function interpolateXY(a, b, p) {
-        function interpolate1(a, b, p) {
-            return a + ((b-a) * p);
-        }
-        return {
-            x: interpolate1(a.x, b.x, p),
-            y: interpolate1(a.y, b.y, p)
-        };
-    }
-
-    // give this a b(0) or b(1)
-    function r(b) {
-        return Math.log(-b + Math.sqrt(sq(b) + 1));
-    }
-
-    function animateStep(c0,w0,c1,w1,V,rho) {
-
-        // see section 6 for user testing to derive these values (they can be tuned)
-        if (V === undefined) V = 0.9;      // section 6 suggests 0.9
-        if (rho === undefined) rho = 1.42; // section 6 suggests 1.42
-
-        // simple interpolation of positions will be fine:
-        var u0 = 0,
-            u1 = MM.point.distance(c0, c1);
-
-        // i = 0 or 1
-        function b(i) {
-            var n = sq(w1) - sq(w0) + ((i ? -1 : 1) *
-                Math.pow(rho, 4) * sq(u1 - u0));
-            var d = 2 * (i ? w1 : w0) * sq(rho) * (u1-u0);
-            return n / d;
-        }
-
-        var r0 = r(b(0)),
-            r1 = r(b(1)),
-            S = (r1-r0) / rho; // "distance"
-
-        function u(s) {
-            var a = w0/sq(rho),
-            b = a * cosh(r0) * tanh(rho*s + r0),
-            c = a * sinh(r0);
-            return b - c + u0;
-        }
-
-        function w(s) {
-            return w0 * cosh(r0) / cosh(rho*s + r0);
-        }
-
-        // special case
-        if (Math.abs(u0 - u1) < 0.000001) {
-            if (Math.abs(w0 - w1) < 0.000001) return;
-
-            var k = w1 < w0 ? -1 : 1;
-            S = Math.abs(Math.log(w1/w0)) / rho;
-
-            u = function(s) {
-                return u0;
-            };
-            w = function(s) {
-                return w0 * Math.exp(k * rho * s);
-            };
-        }
-
-        var t0 = +new Date();
-        function tick() {
-            var t1 = +new Date(),
-                t = (t1 - t0) / 1000.0,
-                s = V * t;
-            if (s > S) {
-                s = S;
-            } else {
-                MM.getFrame(tick);
-            }
-            var us = u(s);
-            var pos = interpolateXY(c0, c1, (us - u0) / (u1 - u0));
-            applyPos(pos, w(s));
-        }
-        MM.getFrame(tick);
-    }
-
-    easey.cancel = function() { abort = true; };
-
-    easey.sequence = function(map, steps) {
-        for (var i = 0; i < (steps.length - 1); i++) {
-            var c = steps[i].callback || function() {};
-            steps[i].callback = (function(j, ca) {
-                return function() {
-                    if (ca) ca();
-                    easey.slow(map, steps[j]);
-                };
-            })(i + 1, c);
-        }
-        return easey.slow(map, steps[0]);
+    easey.stop = function() {
+        abort = true;
     };
 
     easey.running = function() {
         return running;
-    }
-
-    easey.set = function(o) {
-        if (o.z) z = o.z;
-        if (o.time) time = o.time;
-        return running;
     };
 
-    // Basic layout:
-    // if you just provide data, easey
-    // will assume
-    //
-    //   smooth: true,
-    //   greatcircle: true
-    //
-    easey.slow = function(map, options) {
-        var start = (+new Date()),
-            startZoom = map.getZoom(),
-            startCenter = map.getCenter(),
-            startCoordinate = map.coordinate.copy();
+    easey.point = function(x) {
+        to = map.pointCoordinate(x);
+        return easey;
+    };
+
+    easey.zoom = function(x) {
+        to.zoomTo(x);
+        return easey;
+    };
+
+    easey.location = function(x) {
+        to = map.locationCoordinate(x);
+        return easey;
+    };
+
+    easey.time = function(x) {
+        time = x;
+        return easey;
+    };
+
+    easey.to = function(x) {
+        to = x.copy();
+        return easey;
+    };
+
+    easey.path = function(x) {
+        path = paths[x];
+        return easey;
+    };
+
+    easey.map = function(x) {
+        map = x;
+        from = map.coordinate.copy();
+        to = map.coordinate.copy();
+        return easey;
+    };
+
+    function interp(a, b, p) {
+        if (p === 0) return a;
+        if (p === 1) return b;
+        return a + ((b - a) * p);
+    }
+
+    var paths = {};
+
+    // The screen path simply moves between
+    // coordinates in a non-geographical way
+    paths.screen = function(a, b, t) {
+        var zoom_lerp = interp(a.zoom, b.zoom, t);
+        var az = a.copy();
+        var bz = b.copy().zoomTo(a.zoom);
+        return (new MM.Coordinate(
+            interp(az.row, bz.row, t),
+            interp(az.column, bz.column, t),
+            az.zoom)).zoomTo(zoom_lerp);
+    };
+
+    function ptWithCoords(a, b) {
+        // distance from the center of the map
+        var point = new MM.Point(map.dimensions.x / 2, map.dimensions.y / 2);
+        point.x += map.tileSize.x * (b.column - a.column);
+        point.y += map.tileSize.y * (b.row - a.row);
+        return point;
+    }
+
+    // The screen path means that the b
+    // coordinate should maintain its point on screen
+    // throughout the transition, but the map
+    // should move to its zoom level
+    paths.about = function(a, b, t) {
+        var zoom_lerp = interp(a.zoom, b.zoom, t);
+
+        var bs = b.copy().zoomTo(a.zoom);
+        var az = a.copy().zoomTo(zoom_lerp);
+        var bz = b.copy().zoomTo(zoom_lerp);
+        var start = ptWithCoords(a, bs);
+        var end = ptWithCoords(az, bz);
+
+        az.column -= (start.x - end.x) / map.tileSize.x;
+        az.row -= (start.y - end.y) / map.tileSize.y;
+
+        return az;
+    };
+
+    var path = paths.screen;
+
+    easey.future = function(parts) {
+        var futures = [];
+        for (var t = 0; t < 1; t += (1 / parts)) {
+            futures.push(lerp(from, to, t));
+        }
+        return futures;
+    };
+
+    var fastFrame = function(callback) {
+        window.setTimeout(function () {
+            callback(+new Date());
+        }, 1);
+    };
+
+    easey.run = function(callback) {
+        var start = (+new Date());
 
         running = true;
-
-        // Easy-mode options. These preclude setting
-        // any other options.
-        if (typeof options === 'number') {
-            options = { zoom: options };
-        } else if (options.lat && typeof options.lat === 'number') {
-            options = { location: options };
-        } else if (options.x && typeof options.x === 'number') {
-            options = { coordinate: map.pointCoordinate(options) };
-        }
-
-        if (options.point) {
-            options.coordinate = map.pointCoordinate(options.point);
-        } else if (options.about) {
-            options.about_location = map.pointLocation(options.about);
-        }
-
-        z = options.zoom || startZoom;
-        time = options.time || 1000;
-        callback = options.callback || function() {};
-        ease = easings[options.ease] || easings.easeOut;
 
         function tick() {
             var delta = (+new Date()) - start;
@@ -177,32 +136,14 @@
                 return void (abort = running = false);
             } else if (delta > time) {
                 running = false;
-                map.setZoom(z);
-                return callback();
+                map.coordinate = path(from, to, 1);
+                map.draw();
+                if (callback) return callback(map, n);
             } else {
-                MM.getFrame(tick);
+                map.coordinate = path(from, to, easings.easeIn(delta / time));
+                map.draw();
+                fastFrame(tick);
             }
-
-            var t = ease(delta / time);
-            var tz = (z == startZoom) ? z : (startZoom * (1 - t) + z * t);
-            if (options.location) {
-                map.setCenterZoom(MM.Location.interpolate(
-                    startCenter,
-                    options.location, t),
-                    tz);
-            } else if (options.coordinate) {
-                var a = startCoordinate.copy().zoomTo(tz);
-                var b = options.coordinate.copy().zoomTo(tz);
-                map.coordinate = new MM.Coordinate(
-                    (a.row * (1 - t)) +    (b.row * t),
-                    (a.column * (1 - t)) + (b.column * t),
-                    tz);
-            } else if (options.about) {
-                map.coordinate = map.coordinate.zoomTo(tz);
-                var np = map.locationPoint(options.about_location);
-                map.panBy(options.about.x - np.x, options.about.y - np.y);
-            }
-            map.draw();
         }
 
         MM.getFrame(tick);
