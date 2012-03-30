@@ -375,6 +375,7 @@
                 mouseDownTime = 0;
 
             function mouseDown(e) {
+                if (e.shiftKey) return;
                 mousePoint = prevMousePoint = MM.getMousePoint(e, map);
                 return MM.cancelEvent(e);
             }

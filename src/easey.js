@@ -46,6 +46,7 @@
     };
 
     easey.to = function(x) {
+        if (!arguments.length) return to.copy();
         to = x.copy();
         return easey;
     };
