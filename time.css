@@ -1,0 +1,39 @@
+body, button {
+  font:13px/20px "Helvetica Neue", "Helvetica", sans-serif;
+}
+body {
+  background:#9098a1;
+}
+html, body, pre, h1, h2, h3, p {
+  margin:0;padding:0;
+}
+a { color: #A50B00; }
+div.intro {
+  padding:10px;
+  margin-bottom:20px;
+  border:1px solid #000;
+  background:#fff;
+}
+#map {
+  background:#d7edf8;
+  position:absolute;
+  top:0;
+  right:400px;
+  left:0;
+  bottom:0;
+}
+
+#right {
+  width:400px;
+  position:absolute;
+  right:0px;
+  top:0px;
+  height:500px;
+  overflow:auto;
+  }
+
+div.topic {
+  height:479px;
+  padding:10px;
+  border-bottom:1px solid red;
+}

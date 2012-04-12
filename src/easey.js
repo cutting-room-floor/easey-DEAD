@@ -45,6 +45,12 @@
         return easey;
     };
 
+    easey.from = function(x) {
+        if (!arguments.length) return from.copy();
+        from = x.copy();
+        return easey;
+    };
+
     easey.to = function(x) {
         if (!arguments.length) return to.copy();
         to = x.copy();
@@ -111,6 +117,12 @@
     };
 
     var path = paths.screen;
+
+    easey.t = function(t) {
+        map.coordinate = path(from, to, t);
+        map.draw();
+        return easey;
+    };
 
     easey.future = function(parts) {
         var futures = [];
