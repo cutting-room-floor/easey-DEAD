@@ -17,12 +17,14 @@ window.onload = function() {
 
         easey.map(map);
 
-        right.addEventListener('mousewheel', function(e) {
+        function update() {
           var pos = right.scrollTop / 500;
 
           easey.from(positions[Math.floor(pos)])
             .to(positions[Math.ceil(pos)])
             .t(pos - Math.floor(pos));
-        }, false);
+        }
+
+        right.addEventListener('scroll', update, false);
     });
 };
