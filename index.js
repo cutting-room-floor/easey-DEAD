@@ -12,5 +12,33 @@ window.onload = function() {
                 easey.DoubleClickHandler()
             ]);
         map.setCenterZoom(new com.modestmaps.Location(-10, 50), 3);
+
+        var pres = document.getElementsByTagName('pre');
+
+        for (var i = 0; i < pres.length; i++) {
+          pres[i].onclick = function() {
+            eval(this.innerHTML);
+          };
+        }
+
+
+        var scrolly = document.getElementById('scrolly');
+
+        var positions = [
+          map.locationCoordinate({ lat: 33.5, lon: 65.6 }).zoomTo(6),
+          map.locationCoordinate({ lat: 33.1, lon: 44.6 }).zoomTo(6),
+          map.locationCoordinate({ lat: 28.7, lon: 69.2 }).zoomTo(6)];
+
+        var ea = easey().map(map);
+
+        function update() {
+          var pos = scrolly.scrollTop / 200;
+
+          ea.from(positions[Math.floor(pos)])
+            .to(positions[Math.ceil(pos)])
+            .t(pos - Math.floor(pos));
+        }
+
+        scrolly.addEventListener('scroll', update, false);
     });
 };

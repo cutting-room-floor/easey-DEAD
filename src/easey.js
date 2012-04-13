@@ -42,11 +42,6 @@
             return easey;
         };
 
-        easey.time = function(x) {
-            time = x;
-            return easey;
-        };
-
         easey.from = function(x) {
             if (!arguments.length) return from.copy();
             from = x.copy();
@@ -140,7 +135,8 @@
             }, 1);
         };
 
-        easey.run = function(callback) {
+        easey.run = function(time, callback) {
+
             var start = (+new Date());
 
             running = true;

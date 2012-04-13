@@ -14,22 +14,41 @@
   <link href='site.css' type='text/css' rel='stylesheet' />
 </head>
 <body>
-  <div id='map'></div>
+  <div id='header'>
+    <strong>Easey</strong> is a simple map animation library.
+  </div>
   <div class='right'>
-  <div class='intro'>
-    <p><strong>easey</strong> is an easing library for
-    <a href='http://github.com/stamen/modestmaps-js'>Modest Maps</a> that
-    makes your map transitions slick and fancy. You can <a href='http://ds.io/ooBi3R'>read
-    a bit about easey</a> on our blog.</p>
+<pre class='live'>
+easey().map(map)
+  .to(map.locationCoordinate({ lat: 38, lon: -80 })
+    .zoomTo(5)).run(2000);
+</pre>
+<pre class='live'>
+easey().map(map)
+  .to(map.locationCoordinate({ lat: 38, lon: 80 })
+    .zoomTo(10))
+    .path('about')
+    .run(2000);
+</pre>
 
-    <p>Easey has two parts: handlers, that make your normal interaction with
-    a map slicker, and an API, that lets you run transitions robotically.</p>
-
-    <p><a href='https://github.com/mapbox/easey'>get it on GitHub</a>
-    and do cool things with it.</p>
+  <div id='scrolly'>
+    <div class='topic'>
+      <h3>Afghanistan</h3>
+      <small>The country sits at an important geostrategic location that connects the Middle East with Central Asia and the Indian subcontinent,[12] which has been home to various peoples through the ages</small>
+    </div>
+    <div class='topic'>
+      <h3>Iraq</h3>
+      <small>Iraq borders Syria to the northwest, Turkey to the north, Iran to the east, Jordan to the southwest and Kuwait and Saudi Arabia to the south. Iraq has a narrow section of coastline measuring 58 km (36 mi) on the northern Persian Gulf. The capital city, Baghdad is in the center-east of the country.</small>
+    </div>
+    <div class='topic'>
+      <h3>Pakistan</h3>
+      <small>The region forming modern Pakistan was the site of several ancient cultures including the neolithic Mehrgarh and the bronze era Indus Valley Civilisation. Subsequently it has seen invasions or settlements by Hindu, Persian, Indo-Greek, Islamic, Turco-Mongol, Afghan and Sikh cultures.</small>
+    </div>
+  </div>
 
   </div>
-</div>
+  <div id='map'></div>
+
 <script src='index.js' type='text/javascript'></script>
 <script type="text/javascript">
   var _gaq = _gaq || [];
