@@ -370,6 +370,7 @@
             function mouseDown(e) {
                 if (e.shiftKey) return;
                 mousePoint = prevMousePoint = MM.getMousePoint(e, map);
+                map.parent.style.cursor = 'move';
                 return MM.cancelEvent(e);
             }
 
@@ -384,6 +385,7 @@
 
             function mouseUp(e) {
                 mousePoint = prevMousePoint = null;
+                map.parent.style.cursor = '';
                 return MM.cancelEvent(e);
             }
 
