@@ -269,7 +269,7 @@
             // use shift-double-click to zoom out
             easey().map(map)
                 .to(map.pointCoordinate(MM.getMousePoint(e, map)).zoomTo(z))
-                .path('about').time(100).run();
+                .path('about').run(100);
             return MM.cancelEvent(e);
         }
 
@@ -321,7 +321,7 @@
                   z = map.getZoom();
               ea.map(map)
                 .to(map.pointCoordinate(MM.getMousePoint(e, map)).zoomTo(z + (delta > 0 ? 1 : -1)))
-                .path('about').time(200).run();
+                .path('about').run(200);
             } else {
                 ea.zoom(ea.to().zoom + (delta > 0 ? 1 : -1));
             }
