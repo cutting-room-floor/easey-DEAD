@@ -371,7 +371,7 @@
                 animatedLastPoint = true;
 
             function mouseDown(e) {
-                if (e.shiftKey) return;
+                if (e.shiftKey || e.button == 2) return;
                 mousePoint = prevMousePoint = MM.getMousePoint(e, map);
                 moveTime = prevMoveTime = +new Date();
                 map.parent.style.cursor = 'move';
