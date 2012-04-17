@@ -361,53 +361,78 @@
         handler.add = function(map) {
             var prevT = 0,
                 speed = null,
-                drag = 0.25,
-                lastMove = null,
+                drag = 0.15,
                 mouseDownPoint = null,
+                mouseDownTime = 0,
                 mousePoint = null,
-                mouseDownTime = 0;
+                prevMousePoint = null,
+                moveTime = null,
+                prevMoveTime = null,
+                animatedLastPoint = true;
 
             function mouseDown(e) {
-                if (e.shiftKey) return;
+                if (e.shiftKey || e.button == 2) return;
                 mousePoint = prevMousePoint = MM.getMousePoint(e, map);
+                moveTime = prevMoveTime = +new Date();
+                map.parent.style.cursor = 'move';
                 return MM.cancelEvent(e);
             }
 
             function mouseMove(e) {
                 if (mousePoint) {
-                    prevMousePoint = mousePoint;
+                    if (animatedLastPoint) {
+                        prevMousePoint = mousePoint;
+                        prevMoveTime = moveTime;
+                        animatedLastPoint = false;
+                    }
                     mousePoint = MM.getMousePoint(e, map);
-                    lastMove = +new Date();
+                    moveTime = +new Date();
                     return MM.cancelEvent(e);
                 }
             }
 
             function mouseUp(e) {
+                if (+new Date() - prevMoveTime < 50) {
+                    dt = Math.max(1, moveTime - prevMoveTime);
+                    var dir = { x: 0, y: 0 };
+                    dir.x = mousePoint.x - prevMousePoint.x;
+                    dir.y = mousePoint.y - prevMousePoint.y;
+                    speed.x = dir.x / dt;
+                    speed.y = dir.y / dt;
+                } else {
+                    speed.x = 0;
+                    speed.y = 0;
+                }
                 mousePoint = prevMousePoint = null;
+                moveTime = lastMoveTime = null;
+                map.parent.style.cursor = '';
                 return MM.cancelEvent(e);
             }
 
             function animate(t) {
                 var dir = { x: 0, y: 0 };
-                var dt = Math.max(0.001, (t - prevT) / 1000.0);
-                if (mousePoint && prevMousePoint &&
-                    (lastMove > (+new Date() - 50))) {
-                    dir.x = mousePoint.x - prevMousePoint.x;
-                    dir.y = mousePoint.y - prevMousePoint.y;
-                    speed.x = dir.x;
-                    speed.y = dir.y;
+                var dt = Math.max(1, t - prevT);
+                if (mousePoint && prevMousePoint) {
+                    if (!animatedLastPoint) {
+                        dir.x = mousePoint.x - prevMousePoint.x;
+                        dir.y = mousePoint.y - prevMousePoint.y;
+                        map.panBy(dir.x, dir.y);
+                        animatedLastPoint = true;
+                    }
                 } else {
-                    speed.x -= speed.x * drag;
-                    speed.y -= speed.y * drag;
+                    // Rough time based animation accuracy 
+                    // using a linear approximation approach
+                    speed.x *= Math.pow(1 - drag, dt * 60 / 1000);
+                    speed.y *= Math.pow(1 - drag, dt * 60 / 1000);
                     if (Math.abs(speed.x) < 0.001) {
                         speed.x = 0;
                     }
                     if (Math.abs(speed.y) < 0.001) {
                         speed.y = 0;
                     }
-                }
-                if (speed.x || speed.y) {
-                    map.panBy(speed.x, speed.y);
+                    if (speed.x || speed.y) {
+                        map.panBy(speed.x * dt, speed.y * dt);
+                    }
                 }
                 prevT = t;
                 MM.getFrame(animate);
