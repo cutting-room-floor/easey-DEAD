@@ -3,7 +3,7 @@
     easey.TouchHandler = function() {
       var handler = {};
 
-      handler.add = function(map) {
+      handler.init = function(map) {
             var prevT = 0,
                 acceleration = 25.0,
                 speed = null,
@@ -273,7 +273,7 @@
             return MM.cancelEvent(e);
         }
 
-        handler.add = function(x) {
+        handler.init = function(x) {
             map = x;
             MM.addEvent(map.parent, 'dblclick', doubleClick);
             return handler;
@@ -330,7 +330,7 @@
             return MM.cancelEvent(e);
         }
 
-        handler.add = function(x) {
+        handler.init = function(x) {
             map = x;
             _zoomDiv = document.body.appendChild(document.createElement('div'));
             _zoomDiv.style.cssText = 'visibility:hidden;top:0;height:0;width:0;overflow-y:scroll';
@@ -358,7 +358,7 @@
         var handler = {},
             map;
 
-        handler.add = function(map) {
+        handler.init = function(map) {
             var prevT = 0,
                 speed = null,
                 drag = 0.15,

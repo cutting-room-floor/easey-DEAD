@@ -7,7 +7,7 @@ window.onload = function() {
         function(tj) {
         map = new com.modestmaps.Map(dmap, new wax.mm.connector(tj), null, [
           easey.DragHandler(),
-          easey.MouseWheelHandler(),
+          easey.BraidHandler(),
           easey.DoubleClickHandler()
         ]);
         map.setCenterZoom(new com.modestmaps.Location(50, 50), 4);
