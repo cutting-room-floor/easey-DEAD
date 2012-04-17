@@ -6,6 +6,7 @@ easey.BraidHandler = function() {
         ea = easey(),
         prevTime,
         history = [],
+        historyidx = 0,
         precise = false;
 
     function toggle(e) {
@@ -34,12 +35,16 @@ easey.BraidHandler = function() {
               map.zoomByAbout(delta > 0 ? 1 : -1, point);
             }
         }
-        if (t && history.length && (timeSince > 50)) {
-          map.coordinate = history.pop();
+
+        if (t && (timeSince > 50)) {
+          if (delta > 0 && historyidx < history.length - 1) {
+            map.coordinate = history[++historyidx];
+          } else if (historyidx > 0) {
+            map.coordinate = history[--historyidx];
+          }
           map.draw();
         }
 
-        // Cancel the event so that the page doesn't scroll
         return MM.cancelEvent(e);
     }
 
@@ -54,10 +59,14 @@ easey.BraidHandler = function() {
         MM.addEvent(document, 'keyup', toggle);
 
         function addhistory(m) {
+          if (historyidx < history.length - 1) {
+            history = history.slice(0, historyidx);
+          }
           history.push(m.coordinate.copy());
           if (history.length > 10000) {
             history.shift();
           }
+          historyidx = history.length - 1;
         }
 
         map.addCallback('panned', addhistory);
