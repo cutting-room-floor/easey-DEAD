@@ -149,7 +149,7 @@
                     running = false;
                     map.coordinate = path(from, to, 1);
                     map.draw();
-                    if (callback) return callback(map, n);
+                    if (callback) return callback(map);
                 } else {
                     map.coordinate = path(from, to, easings.easeIn(delta / time));
                     map.draw();
