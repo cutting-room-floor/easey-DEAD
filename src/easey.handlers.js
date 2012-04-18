@@ -254,7 +254,9 @@
 
                 return MM.cancelEvent(e);
             }
-        }
+        };
+
+        return handler;
     };
 
     easey.DoubleClickHandler = function() {
