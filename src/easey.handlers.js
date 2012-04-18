@@ -374,6 +374,8 @@
 
             function mouseDown(e) {
                 if (e.shiftKey || e.button == 2) return;
+                MM.addEvent(document, 'mousemove', mouseMove);
+                MM.addEvent(document, 'mouseup', mouseUp);
                 mousePoint = prevMousePoint = MM.getMousePoint(e, map);
                 moveTime = prevMoveTime = +new Date();
                 map.parent.style.cursor = 'move';
@@ -394,6 +396,8 @@
             }
 
             function mouseUp(e) {
+                MM.removeEvent(document, 'mousemove', mouseMove);
+                MM.removeEvent(document, 'mouseup', mouseUp);
                 if (+new Date() - prevMoveTime < 50) {
                     dt = Math.max(1, moveTime - prevMoveTime);
                     var dir = { x: 0, y: 0 };
@@ -444,8 +448,6 @@
                 map.parent.focus();
             });
             MM.addEvent(map.parent, 'mousedown', mouseDown);
-            MM.addEvent(map.parent, 'mousemove', mouseMove);
-            MM.addEvent(map.parent, 'mouseup', mouseUp);
             prevT = new Date().getTime();
             speed = { x: 0, y: 0 };
             MM.getFrame(animate);
