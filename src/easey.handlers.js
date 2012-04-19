@@ -271,7 +271,9 @@
             // use shift-double-click to zoom out
             easey().map(map)
                 .to(map.pointCoordinate(MM.getMousePoint(e, map)).zoomTo(z))
-                .path('about').run(100);
+                .path('about').run(100, function() {
+                map.dispatchCallback('zoomed');
+            });
             return MM.cancelEvent(e);
         }
 
@@ -312,18 +314,16 @@
             var timeSince = new Date().getTime() - prevTime;
             var point = MM.getMousePoint(e, map);
 
-            if (Math.abs(delta) > 0 && (timeSince > 200) && !precise) {
-                map.zoomByAbout(delta > 0 ? 1 : -1, point);
-                prevTime = new Date().getTime();
-            } else if (precise) {
-                map.zoomByAbout(delta * 0.001, point);
+            function dispatchZoomed() {
+                map.dispatchCallback('zoomed');
             }
+
             if (!ea.running()) {
               var point = MM.getMousePoint(e, map),
                   z = map.getZoom();
               ea.map(map)
                 .to(map.pointCoordinate(MM.getMousePoint(e, map)).zoomTo(z + (delta > 0 ? 1 : -1)))
-                .path('about').run(200);
+                .path('about').run(200, dispatchZoomed);
             } else {
                 ea.zoom(ea.to().zoom + (delta > 0 ? 1 : -1));
             }

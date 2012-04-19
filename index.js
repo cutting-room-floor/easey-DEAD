@@ -8,10 +8,15 @@ window.onload = function() {
         map = new com.modestmaps.Map(dmap,
             new wax.mm.connector(tj), null, [
                 easey.DragHandler(),
+                easey.TouchHandler(),
                 easey.MouseWheelHandler(),
                 easey.DoubleClickHandler()
             ]);
         map.setCenterZoom(new com.modestmaps.Location(-10, 50), 3);
+
+        map.addCallback('zoomed', function() {
+            // console.log(map.getZoom());
+        });
 
         var pres = document.getElementsByTagName('pre');
 
