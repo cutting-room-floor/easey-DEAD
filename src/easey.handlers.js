@@ -123,11 +123,11 @@
             // round zoom.
             function onDoubleTap(tap) {
                 // zoom in to a round number
-                easey.slow(map, {
-                    zoom: Math.round(map.getZoom()) + 1,
-                    about: new MM.Point(tap.x, tap.y),
-                    time: 100
-                });
+                easey().map(map)
+                    .to(map.pointCoordinate(tap).zoomTo(map.getZoom() + 1))
+                    .path('about').run(200, function() {
+                        map.dispatchCallback('zoomed');
+                    });
             }
 
             function isTouchable () {
