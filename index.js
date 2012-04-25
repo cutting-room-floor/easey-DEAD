@@ -34,7 +34,7 @@ window.onload = function() {
           map.locationCoordinate({ lat: 33.1, lon: 44.6 }).zoomTo(6),
           map.locationCoordinate({ lat: 28.7, lon: 69.2 }).zoomTo(6)];
 
-        var ea = easey().map(map);
+        var ea = easey().map(map).easing('easeInOut');
 
         function update() {
           var pos = scrolly.scrollTop / 200;
