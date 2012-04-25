@@ -35,7 +35,7 @@
         };
 
         easey.zoom = function(x) {
-            to = to.zoomTo(x);
+            to = map.enforceZoomLimits(to.zoomTo(x));
             return easey;
         };
 
@@ -52,7 +52,7 @@
 
         easey.to = function(x) {
             if (!arguments.length) return to.copy();
-            to = x.copy();
+            to = map.enforceZoomLimits(x.copy());
             return easey;
         };
 
