@@ -142,9 +142,15 @@
             }, 1);
         };
 
+        var start;
+        easey.resetRun = function () {
+            start = (+ new Date()); 
+            return easey;
+        }
+
         easey.run = function(time, callback) {
 
-            var start = (+new Date());
+            start = (+new Date());
 
             running = true;
 
