@@ -129,12 +129,6 @@
             return futures;
         };
 
-        var fastFrame = function(callback) {
-            window.setTimeout(function () {
-                callback(+new Date());
-            }, 1);
-        };
-
         easey.run = function(time, callback) {
 
             var start = (+new Date());
@@ -153,7 +147,7 @@
                 } else {
                     map.coordinate = path(from, to, easings.easeIn(delta / time));
                     map.draw();
-                    fastFrame(tick);
+                    MM.getFrame(tick);
                 }
             }
 
