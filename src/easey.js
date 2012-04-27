@@ -8,8 +8,10 @@
         var easings = {
             easeIn: function(t) { return t * t; },
             easeOut: function(t) { return Math.sin(t * Math.PI / 2); },
+            easeInOut: function(t) { return (1 - Math.cos(Math.PI * t)) / 2; },
             linear: function(t) { return t; }
         };
+        var easing = easings.easeOut;
 
         // to is the singular coordinate that any transition is based off
         // three dimensions:
@@ -33,7 +35,7 @@
         };
 
         easey.zoom = function(x) {
-            to = to.zoomTo(x);
+            to = map.enforceZoomLimits(to.zoomTo(x));
             return easey;
         };
 
@@ -50,7 +52,7 @@
 
         easey.to = function(x) {
             if (!arguments.length) return to.copy();
-            to = x.copy();
+            to = map.enforceZoomLimits(x.copy());
             return easey;
         };
 
@@ -58,6 +60,11 @@
             path = paths[x];
             return easey;
         };
+
+        easey.easing = function(x) {
+            easing = easings[x];
+            return easey;
+        }
 
         easey.map = function(x) {
             if (!arguments.length) return map;
@@ -117,7 +124,7 @@
         var path = paths.screen;
 
         easey.t = function(t) {
-            map.coordinate = path(from, to, t);
+            map.coordinate = path(from, to, easing(t));
             map.draw();
             return easey;
         };
@@ -130,10 +137,17 @@
             return futures;
         };
 
+        var start;
+        easey.resetRun = function () {
+            start = (+ new Date()); 
+            return easey;
+        };
+
         easey.run = function(time, callback) {
 
-            var start = (+new Date());
             time = time || 1000;
+
+            start = (+new Date());
 
             running = true;
 
@@ -147,7 +161,7 @@
                     map.draw();
                     if (callback) return callback(map);
                 } else {
-                    map.coordinate = path(from, to, easings.easeIn(delta / time));
+                    map.coordinate = path(from, to, easing(delta / time));
                     map.draw();
                     MM.getFrame(tick);
                 }
