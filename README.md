@@ -10,3 +10,11 @@ Easey adds easing to Modest Maps, giving it a serious workout.
   easing pattern.
 * Modest Maps handlers are now in `easey.handlers.js`,
   which is dependent on `easey.js`.
+
+## Contributors
+
+This software is made awesome by people like you. If you see something
+to improve, send a pull request!
+
+* [aibram (Ansis Brammanis)](https://github.com/aibram)
+* [mikemorris (Mike Morris)](https://github.com/mikemorris)
