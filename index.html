@@ -15,9 +15,11 @@
 </head>
 <body>
   <div id='header'>
-    <strong>Easey</strong> is a simple map animation library.
+    <strong>Easey</strong> is a simple map animation library. | <a href='https://github.com/mapbox/easey/wiki'>API Docs on the Wiki</a> | <a href='https://github.com/mapbox/easey'>Clone &amp; Get on GitHub</a>
   </div>
   <div class='right'>
+<p>Easey is a map animation library. It works with <a href='http://modestmaps.com/'>Modest Maps</a> and provides
+advanced <a href='http://www.robertpenner.com/easing/'>easing</a> as well as inertial panning and zooming.</p>
 <pre class='live'>
 easey().map(map)
   .to(map.locationCoordinate({ lat: 38, lon: -80 })
@@ -30,7 +32,6 @@ easey().map(map)
     .path('about')
     .run(2000);
 </pre>
-
   <div id='scrolly'>
     <div class='topic'>
       <h3>Afghanistan</h3>
@@ -45,10 +46,8 @@ easey().map(map)
       <small>The region forming modern Pakistan was the site of several ancient cultures including the neolithic Mehrgarh and the bronze era Indus Valley Civilisation. Subsequently it has seen invasions or settlements by Hindu, Persian, Indo-Greek, Islamic, Turco-Mongol, Afghan and Sikh cultures.</small>
     </div>
   </div>
-
   </div>
   <div id='map'></div>
-
 <script src='index.js' type='text/javascript'></script>
 <script type="text/javascript">
   var _gaq = _gaq || [];
