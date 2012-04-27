@@ -32,9 +32,12 @@ describe("Easey", function() {
   });
 
   it('correctly interpolates between two coordinates', function() {
-    var ease = easey();
-    ease.map(map).from(new MM.Coordinate(0, 10, 0))
-      .to(new MM.Coordinate(0, 0, 0)).t(0.5);
+    easey().map(map)
+      .from(new MM.Coordinate(0, 10, 0))
+      .to(new MM.Coordinate(0, 0, 0))
+      .easing('linear')
+      .t(0.5);
+
     expect(map.coordinate.column).toEqual(5);
     expect(map.coordinate.row).toEqual(0);
     expect(map.coordinate.zoom).toEqual(0);

@@ -64,7 +64,7 @@
         easey.easing = function(x) {
             easing = easings[x];
             return easey;
-        }
+        };
 
         easey.map = function(x) {
             if (!arguments.length) return map;
