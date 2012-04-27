@@ -33,7 +33,7 @@
         };
 
         easey.zoom = function(x) {
-            to.zoomTo(x);
+            to = to.zoomTo(x);
             return easey;
         };
 
@@ -60,6 +60,7 @@
         };
 
         easey.map = function(x) {
+            if (!arguments.length) return map;
             map = x;
             from = map.coordinate.copy();
             to = map.coordinate.copy();
@@ -123,8 +124,8 @@
 
         easey.future = function(parts) {
             var futures = [];
-            for (var t = 0; t < 1; t += (1 / parts)) {
-                futures.push(lerp(from, to, t));
+            for (var t = 0; t < parts; t++) {
+                futures.push(path(from, to, t / (parts - 1)));
             }
             return futures;
         };
