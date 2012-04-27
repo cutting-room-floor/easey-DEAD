@@ -322,10 +322,13 @@
               var point = MM.getMousePoint(e, map),
                   z = map.getZoom();
               ea.map(map)
+                .easing('easeOut')
                 .to(map.pointCoordinate(MM.getMousePoint(e, map)).zoomTo(z + (delta > 0 ? 1 : -1)))
-                .path('about').run(200, dispatchZoomed);
-            } else {
-                ea.zoom(ea.to().zoom + (delta > 0 ? 1 : -1));
+                .path('about').run(400, dispatchZoomed);
+                prevTime = new Date().getTime();
+            } else if (timeSince > 150){
+                ea.zoom(ea.to().zoom + (delta > 0 ? 1 : -1)).from(map.coordinate).resetRun();
+                prevTime = new Date().getTime();
             }
 
             // Cancel the event so that the page doesn't scroll
