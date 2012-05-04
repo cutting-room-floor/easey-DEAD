@@ -178,7 +178,7 @@
         //
         // Model described in section 3, equations 1 through 5
         // Derived equation (9) of optimal path implemented below
-        easey.optimal = function(V, rho) {
+        easey.optimal = function(V, rho, callback) {
             // Section 6 describes user testing of these tunable values
             V = V || 0.9;
             rho = rho || 1.42;
@@ -251,7 +251,7 @@
                 return new MM.Coordinate(y, x, 0).zoomTo(z);
             }
             easey.easing('linear');
-            easey.run(S / V * 1000);
+            easey.run(S / V * 1000, callback);
         }
 
         return easey;
