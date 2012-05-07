@@ -33,6 +33,11 @@ easey().map(map)
     .path('about')
     .run(2000);
 </pre>
+<pre class='live'>
+easey().map(map)
+  .to(map.locationCoordinate({ lat: 60, lon: 11}))
+  .zoom(8).optimal();
+</pre>
   <div id='scrolly'>
     <div class='topic'>
       <h3>Afghanistan</h3>
