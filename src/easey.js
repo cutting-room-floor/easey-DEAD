@@ -192,11 +192,11 @@
 
             // Width is measured in coordinate units at zoom 0
             var TL = map.pointCoordinate(new MM.Point(0, 0)).zoomTo(0),
-                BR = map.pointCoordinate(map.dimensions).zoomTo(0);
-                w0 = Math.max(BR.column - TL.column, BR.row - TL.row);
-                w1 = w0 * Math.pow(2, from.zoom - to.zoom);
+                BR = map.pointCoordinate(map.dimensions).zoomTo(0),
+                w0 = Math.max(BR.column - TL.column, BR.row - TL.row),
+                w1 = w0 * Math.pow(2, from.zoom - to.zoom),
                 start = from.zoomTo(0),
-                end = to.zoomTo(0);
+                end = to.zoomTo(0),
                 c0 = {x: start.column, y: start.row},
                 c1 = {x: end.column, y: end.row},
                 u0 = 0,
