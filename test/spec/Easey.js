@@ -81,4 +81,20 @@ describe("Easey", function() {
       expect(sink.receive).toHaveBeenCalledWith(map);
     });
   });
+
+  it('ends up at the correct coord after an optimal zoom/pan', function() {
+    map.setSize(new MM.Point(10, 10));
+    var ease = easey();
+    ease.map(map).from(new MM.Coordinate(2, 2, 2))
+      .to(new MM.Coordinate(1, 1, 1));
+    runs(function() {
+      ease.optimal(20);
+    });
+    waits(200);
+    runs(function() {
+      expect(map.coordinate.column).toEqual(1);
+      expect(map.coordinate.row).toEqual(1);
+      expect(map.coordinate.zoom).toEqual(1);
+    });
+  });
 });
