@@ -1,0 +1,4 @@
+## 1.0.2
+
+* Fix concatenated files by beginning source with `;`
+* Fix style issues

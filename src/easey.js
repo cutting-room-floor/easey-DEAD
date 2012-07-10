@@ -1,5 +1,4 @@
-(function(context, MM) {
-
+;(function(context, MM) {
     var easey = function() {
         var easey = {},
             running = false,
@@ -139,7 +138,7 @@
 
         var start;
         easey.resetRun = function () {
-            start = (+ new Date()); 
+            start = (+ new Date());
             return easey;
         };
 
@@ -217,14 +216,14 @@
                 S = (r1 - r0) / rho;
 
             // Width
-            function w(s) {
+            var w = function(s) {
                 return w0 * cosh(r0) / cosh (rho * s + r0);
-            }
+            };
 
             // Zoom
-            function u(s) {
+            var u = function(s) {
                 return (w0 / sqr(rho)) * cosh(r0) * tanh(rho * s + r0) - (w0 / sqr(rho)) * sinh(r0) + u0;
-            }
+            };
 
             // Special case, when no panning necessary
             if (Math.abs(u1) < 0.000001) {
@@ -235,10 +234,10 @@
                 S = Math.abs(Math.log(w1/w0)) / rho;
                 u = function(s) {
                     return u0;
-                }
+                };
                 w = function(s) {
                     return w0 * Math.exp(k * rho * s);
-                }
+                };
             }
 
             path = function (a, b, t) {
@@ -249,13 +248,14 @@
                     x = interp(c0.x, c1.x, us/u1),
                     y = interp(c0.y, c1.y, us/u1);
                 return new MM.Coordinate(y, x, 0).zoomTo(z);
-            }
+            };
+
             easey.easing('linear');
             easey.run(S / V * 1000, callback);
-        }
+        };
 
         return easey;
     };
 
     this.easey = easey;
-})(this, com.modestmaps);
+})(this, MM);

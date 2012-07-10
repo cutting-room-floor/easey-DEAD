@@ -1,4 +1,4 @@
-(function(context, MM) {
+;(function(context, MM) {
 
     easey.TouchHandler = function() {
         var handler = {},
@@ -311,7 +311,6 @@
 
             // limit mousewheeling to once every 200ms
             var timeSince = new Date().getTime() - prevTime;
-            var point = MM.getMousePoint(e, map);
 
             function dispatchZoomed() {
                 map.dispatchCallback('zoomed');
