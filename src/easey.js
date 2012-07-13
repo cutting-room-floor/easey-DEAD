@@ -22,6 +22,7 @@
 
         easey.stop = function() {
             abort = true;
+            from = null;
         };
 
         easey.running = function() {
@@ -68,7 +69,6 @@
         easey.map = function(x) {
             if (!arguments.length) return map;
             map = x;
-            from = map.coordinate.copy();
             to = map.coordinate.copy();
             return easey;
         };
@@ -144,6 +144,8 @@
 
         easey.run = function(time, callback) {
 
+            if (!from) from = map.coordinate.copy();
+
             time = time || 1000;
 
             start = (+new Date());
@@ -157,6 +159,7 @@
                 } else if (delta > time) {
                     running = false;
                     map.coordinate = path(from, to, 1);
+                    from = null;
                     map.draw();
                     if (callback) return callback(map);
                 } else {
@@ -187,7 +190,8 @@
             function cosh(n) { return (Math.exp(n) + Math.exp(-n)) / 2; }
             function tanh(n) { return sinh(n) / cosh(n); }
 
-            map.coordinate = from; // For when `from` not current coordinate
+            if (from) map.coordinate = from; // For when `from` not current coordinate
+            else from = map.coordinate.copy();
 
             // Width is measured in coordinate units at zoom 0
             var TL = map.pointCoordinate(new MM.Point(0, 0)).zoomTo(0),
