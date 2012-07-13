@@ -23,7 +23,7 @@
 
         easey.stop = function(callback) {
             abort = true;
-            from = null;
+            from = undefined;
             abortCallback = callback;
         };
 
@@ -47,7 +47,7 @@
         };
 
         easey.from = function(x) {
-            if (!arguments.length) return from.copy();
+            if (!arguments.length) return from ? from.copy() : from;
             from = x.copy();
             return easey;
         };
@@ -167,7 +167,7 @@
                 } else if (delta > time) {
                     running = false;
                     map.coordinate = path(from, to, 1);
-                    from = null;
+                    from = undefined;
                     map.draw();
                     if (callback) return callback(map);
                 } else {
