@@ -244,7 +244,7 @@
                 };
             }
 
-            path = function (a, b, t) {
+            var path = function (a, b, t) {
                 if (t == 1) return to;
                 var s = t * S,
                     us = u(s),
