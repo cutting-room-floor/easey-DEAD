@@ -2,7 +2,8 @@
     var easey = function() {
         var easey = {},
             running = false,
-            abort = false; // killswitch for transitions
+            abort = false, // killswitch for transitions
+            abortCallback; // callback called when aborted
 
         var easings = {
             easeIn: function(t) { return t * t; },
@@ -20,9 +21,10 @@
         // * path
         var from, to, map;
 
-        easey.stop = function() {
+        easey.stop = function(callback) {
             abort = true;
             from = null;
+            abortCallback = callback;
         };
 
         easey.running = function() {
@@ -144,6 +146,10 @@
 
         easey.run = function(time, callback) {
 
+            if (running) return easey.stop(function() {
+                easey.run(time, callback);
+            });
+
             if (!from) from = map.coordinate.copy();
 
             time = time || 1000;
@@ -155,7 +161,9 @@
             function tick() {
                 var delta = (+new Date()) - start;
                 if (abort) {
-                    return void (abort = running = false);
+                    abort = running = false;
+                    abortCallback();
+                    return abortCallback = undefined;
                 } else if (delta > time) {
                     running = false;
                     map.coordinate = path(from, to, 1);
