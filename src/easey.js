@@ -262,7 +262,6 @@
                 return new MM.Coordinate(y, x, 0).zoomTo(z);
             };
 
-            easey.easing('linear');
             easey.run(S / V * 1000, callback);
         };
 
