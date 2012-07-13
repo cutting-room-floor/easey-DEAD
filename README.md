@@ -1,10 +1,10 @@
 # easey
 
-Easey adds easing to Modest Maps, giving it a serious workout.
+Easey adds easing to [Modest Maps](http://github.com/modestmaps/modestmaps-js), giving it a serious workout.
 
-* [Docs](https://github.com/mapbox/easey/wiki)
-* [Online tests](http://mapbox.com/easey/test/)
-* [Online demo](http://mapbox.com/easey/)
+# [Documentation](https://github.com/mapbox/easey/blob/gh-pages/API.md)
+# [Online tests](http://mapbox.com/easey/test/)
+# [Online demo](http://mapbox.com/easey/)
 
 ## Contributors
 
