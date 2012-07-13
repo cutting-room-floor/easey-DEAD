@@ -2,7 +2,8 @@
     var easey = function() {
         var easey = {},
             running = false,
-            abort = false; // killswitch for transitions
+            abort = false, // killswitch for transitions
+            abortCallback; // callback called when aborted
 
         var easings = {
             easeIn: function(t) { return t * t; },
@@ -20,8 +21,10 @@
         // * path
         var from, to, map;
 
-        easey.stop = function() {
+        easey.stop = function(callback) {
             abort = true;
+            from = undefined;
+            abortCallback = callback;
         };
 
         easey.running = function() {
@@ -44,7 +47,7 @@
         };
 
         easey.from = function(x) {
-            if (!arguments.length) return from.copy();
+            if (!arguments.length) return from ? from.copy() : from;
             from = x.copy();
             return easey;
         };
@@ -68,7 +71,6 @@
         easey.map = function(x) {
             if (!arguments.length) return map;
             map = x;
-            from = map.coordinate.copy();
             to = map.coordinate.copy();
             return easey;
         };
@@ -144,6 +146,12 @@
 
         easey.run = function(time, callback) {
 
+            if (running) return easey.stop(function() {
+                easey.run(time, callback);
+            });
+
+            if (!from) from = map.coordinate.copy();
+
             time = time || 1000;
 
             start = (+new Date());
@@ -153,10 +161,13 @@
             function tick() {
                 var delta = (+new Date()) - start;
                 if (abort) {
-                    return void (abort = running = false);
+                    abort = running = false;
+                    abortCallback();
+                    return abortCallback = undefined;
                 } else if (delta > time) {
                     running = false;
                     map.coordinate = path(from, to, 1);
+                    from = undefined;
                     map.draw();
                     if (callback) return callback(map);
                 } else {
@@ -187,7 +198,8 @@
             function cosh(n) { return (Math.exp(n) + Math.exp(-n)) / 2; }
             function tanh(n) { return sinh(n) / cosh(n); }
 
-            map.coordinate = from; // For when `from` not current coordinate
+            if (from) map.coordinate = from; // For when `from` not current coordinate
+            else from = map.coordinate.copy();
 
             // Width is measured in coordinate units at zoom 0
             var TL = map.pointCoordinate(new MM.Point(0, 0)).zoomTo(0),
@@ -240,7 +252,7 @@
                 };
             }
 
-            path = function (a, b, t) {
+            var path = function (a, b, t) {
                 if (t == 1) return to;
                 var s = t * S,
                     us = u(s),
@@ -250,7 +262,6 @@
                 return new MM.Coordinate(y, x, 0).zoomTo(z);
             };
 
-            easey.easing('linear');
             easey.run(S / V * 1000, callback);
         };
 
