@@ -16,10 +16,9 @@ describe("Easey", function() {
         expect(ease.map()).toEqual(map);
     });
 
-    it('automatically sets to and from', function() {
+    it('automatically sets to', function() {
         var ease = easey();
         ease.map(map);
-        expect(ease.from()).toEqual(map.coordinate);
         expect(ease.to()).toEqual(map.coordinate);
     });
 
@@ -94,6 +93,16 @@ describe("Easey", function() {
             expect(map.coordinate.column).toEqual(1);
             expect(map.coordinate.row).toEqual(1);
             expect(map.coordinate.zoom).toEqual(1);
+        });
+    });
+
+    it('resets from after a run', function() {
+        var ease = easey();
+        ease.map(map).from(new MM.Coordinate(0, 10, 0))
+        .to(new MM.Coordinate(0, 0, 0)).run(1);
+        waits(50);
+        runs(function() {
+            expect(ease.from()).toEqual(undefined);
         });
     });
 });
