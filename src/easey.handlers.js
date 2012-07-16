@@ -1,6 +1,8 @@
 ;(function(context, MM) {
 
-    easey.TouchHandler = function() {
+    var easey_handlers = {};
+
+    easey_handlers.TouchHandler = function() {
         var handler = {},
             map,
             prevT = 0,
@@ -258,7 +260,7 @@
         return handler;
     };
 
-    easey.DoubleClickHandler = function() {
+    easey_handlers.DoubleClickHandler = function() {
         var handler = {},
             map;
 
@@ -289,7 +291,7 @@
         return handler;
     };
 
-    easey.MouseWheelHandler = function() {
+    easey_handlers.MouseWheelHandler = function() {
         var handler = {},
             map,
             _zoomDiv,
@@ -357,7 +359,7 @@
         return handler;
     };
 
-    easey.DragHandler = function() {
+    easey_handlers.DragHandler = function() {
         var handler = {},
             map,
             prevT = 0,
@@ -466,5 +468,7 @@
 
         return handler;
     };
+
+    this.easey_handlers = easey_handlers;
 
 })(this, MM);

@@ -1,3 +1,8 @@
+## 2.0.0
+
+* `easey` handlers are now moved to `easey_handlers`
+  instead of the `easey` function/object.
+
 ## 1.0.3
 
 * Adds API.md document
