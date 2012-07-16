@@ -7,10 +7,10 @@ window.onload = function() {
         function(tj) {
         map = new com.modestmaps.Map(dmap,
             new wax.mm.connector(tj), null, [
-                easey.DragHandler(),
-                easey.TouchHandler(),
-                easey.MouseWheelHandler(),
-                easey.DoubleClickHandler()
+                easey_handlers.DragHandler(),
+                easey_handlers.TouchHandler(),
+                easey_handlers.MouseWheelHandler(),
+                easey_handlers.DoubleClickHandler()
             ]);
         map.setCenterZoom(new com.modestmaps.Location(-10, 50), 3);
 
@@ -25,7 +25,6 @@ window.onload = function() {
             eval(this.innerHTML);
           };
         }
-
 
         var scrolly = document.getElementById('scrolly');
 
