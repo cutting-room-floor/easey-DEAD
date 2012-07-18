@@ -151,11 +151,8 @@
             });
 
             if (!from) from = map.coordinate.copy();
-
             time = time || 1000;
-
             start = (+new Date());
-
             running = true;
 
             function tick() {
@@ -163,7 +160,7 @@
                 if (abort) {
                     abort = running = false;
                     abortCallback();
-                    return abortCallback = undefined;
+                    return (abortCallback = undefined);
                 } else if (delta > time) {
                     running = false;
                     map.coordinate = path(from, to, 1);
