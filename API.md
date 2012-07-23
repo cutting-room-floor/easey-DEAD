@@ -10,9 +10,9 @@ distance.
 
 ### ease.from(coord)
 
-**Arguments:**
-
 Set the starting coordinate for the easing. You don't usually need to call this, because easings default to the current coordinate.
+
+**Arguments:**
 
 * `coord` is an instance of `MM.Coordinate` representing the starting coordinate for the easing.
 
@@ -43,7 +43,7 @@ Set the zoom level of the `to` coordinate that easey is easing to.
 
 ### ease.t(value)
 
-Sets the map to a specific point in the easing.
+Set the map to a specific point in the easing.
 
 **Arguments:**
 
@@ -61,10 +61,10 @@ Get the future of an easing transition, given a number of parts for it to be div
 
 **Returns** an array of `MM.Coordinate` objects representing each in-between location.
 
-
 ### ease.easing(name)
 
-Set the easing curve. 
+Set the easing curve - this defines how quickly the transition gets to its end and whether it speeds up or slows down near the beginning
+and end.
 
 **Arguments:**
 
