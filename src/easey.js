@@ -37,6 +37,7 @@
         };
 
         easey.zoom = function(x) {
+            if (!to) to = map.coordinate.copy();
             to = map.enforceZoomLimits(to.zoomTo(x));
             return easey;
         };
@@ -71,7 +72,6 @@
         easey.map = function(x) {
             if (!arguments.length) return map;
             map = x;
-            to = map.coordinate.copy();
             return easey;
         };
 
@@ -151,6 +151,7 @@
             });
 
             if (!from) from = map.coordinate.copy();
+            if (!to) to = map.coordinate.copy();
             time = time || 1000;
             start = (+new Date());
             running = true;
@@ -164,7 +165,7 @@
                 } else if (delta > time) {
                     running = false;
                     map.coordinate = path(from, to, 1);
-                    from = undefined;
+                    to = from = undefined;
                     map.draw();
                     if (callback) return callback(map);
                 } else {

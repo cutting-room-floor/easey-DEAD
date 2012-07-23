@@ -16,12 +16,6 @@ describe("Easey", function() {
         expect(ease.map()).toEqual(map);
     });
 
-    it('automatically sets to', function() {
-        var ease = easey();
-        ease.map(map);
-        expect(ease.to()).toEqual(map.coordinate);
-    });
-
     it('zooms the to coordinate with zoom()', function() {
         var ease = easey();
         ease.map(map);
