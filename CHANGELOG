@@ -1,3 +1,8 @@
+## 2.0.1
+
+* `from` and `to` are now set to the map center by
+  default.
+
 ## 2.0.0
 
 * `easey` handlers are now moved to `easey_handlers`
