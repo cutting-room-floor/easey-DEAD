@@ -250,7 +250,8 @@
                 };
             }
 
-            var path = function (a, b, t) {
+            var oldpath = path;
+            path = function (a, b, t) {
                 if (t == 1) return to;
                 var s = t * S,
                     us = u(s),
@@ -260,7 +261,10 @@
                 return new MM.Coordinate(y, x, 0).zoomTo(z);
             };
 
-            easey.run(S / V * 1000, callback);
+            easey.run(S / V * 1000, function(m) {
+                path = oldpath;
+                if (callback) callback(m);
+            });
         };
 
         return easey;
