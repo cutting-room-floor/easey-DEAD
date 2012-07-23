@@ -6,72 +6,105 @@ distance.
 
 ## var ease = mapbox.ease()
 
-This creates a new object from which to do easing transitions.
+**Returns** an easey object, which has the following methods:
 
-### ease.from(MM.Coordinate)
+### ease.from(coord)
 
-Set the 'from' coordinate in this easing. The map starts from here. You don't usually need to call this, because calling `.map(mapObject)` automatically assigns `from` to the current position of the map:
+**Arguments:**
 
-    from = map.coordinate.copy();
+Set the starting coordinate for the easing. You don't usually need to call this, because easings default to the current coordinate.
 
-### ease.to(MM.Coordinate)
+* `coord` is an instance of `MM.Coordinate` representing the starting coordinate for the easing.
 
-Set the destination of the ease: this takes `MM.Coordinate`s - you can get coordinates out of other types by using `locationCoordinate` and `pointCoordinate`.
+**Returns** the easey object.
+
+### ease.to(coord)
+
+Set the destination coordinate for the easing. 
+
+**Arguments:**
+
+* `coord` is an instance of `MM.Coordinate` representing the destination coordinate for the easing. 
 
 Since easey deals exclusively in Coordinates, [the reference for converting between points, locations, and coordinates in Modest Maps is essential reading](https://github.com/stamen/modestmaps-js/wiki/Point,-Location,-and-Coordinate).
 
-### ease.zoom(value)
+**Returns** the easey object.
 
-Set the zoom level of the `to` coordinate, so the zoom level that easey is easing to. The argument to this
-function must be a number corresponding to a zoom level.
+### ease.zoom(level)
 
-This is a convenience function for
+Set the zoom level of the `to` coordinate that easey is easing to.
 
-    easey.to(easey.to().zoomTo(zoomLevel));
+**Arguments:**
+
+* `level` is a number representing the zoom level
+
+**Returns** the easey object.
+
 
 ### ease.t(value)
 
-Derive a point in the ease. The argument is a float between 0 and 1, in which 0 is `from` and 1 is `to`.
+Sets the map to a specific point in the easing.
 
-### ease.future(value)
+**Arguments:**
 
-Get the future of an easing transition, given a number of parts for it to be divided over.
-This returns an array of `MM.Coordinate` objects representing each in-between location.
-The argument to this function is a positive integer number.
+* `value` is a float between 0 and 1, where 0 is `from` and 1 is `to`.
 
-This is a convenience function for calling `easey.t()` a bunch of times.
+**Returns** the easey object.
 
-### ease.easing(value)
+### ease.future(parts)
 
-Set the easing curve. This takes a string as its argument. The current options are:
+Get the future of an easing transition, given a number of parts for it to be divided over. This is a convenience function for calling `easey.t()` a bunch of times.
 
-* 'easeIn'
-* 'easeOut'
-* 'easeInOut'
-* 'linear'
+**Arguments:**
 
-### ease.path(value)
+* `parts` is an positive integer representing the number of parts to divide the easing into.
+
+**Returns** an array of `MM.Coordinate` objects representing each in-between location.
+
+
+### ease.easing(name)
+
+Set the easing curve. 
+
+**Arguments:**
+
+* `name` is the string name of the easing to use. Current options are:
+    * 'easeIn'
+    * 'easeOut'
+    * 'easeInOut'
+    * 'linear'
+
+**Returns** the easey object.
+
+### ease.path(pathname)
 
 Set the type of path - the type of interpolation between points.
 
-This takes a string with the current options:
+**Arguments:**
 
-* `screen`: a 'straight line' path from place to place - in the Mercator projection, this is a rhumb line
-* `about`: the default path for a double-click zoom: this keeps a single coordinate in the same screen pixel over the zoom transition
+* `pathname` is a string name of the path to use. Current options are:
+    * `screen`: a 'straight line' path from place to place - in the Mercator projection, this is a rhumb line
+    * `about`: the default path for a double-click zoom: this keeps a single coordinate in the same screen pixel over the zoom transition
+
+**Returns** the easey object.
 
 ### ease.run([time [, callback])
 
-Start an _animated ease_. Both parameters are optional: if provided, `time` is
-an integer number corresponding to the number of milliseconds duration,
-and second argument is a `callback` - a Javascript function that
-is called when the map has moved to its destination.
+Start an _animated ease_. Both parameters are optional.
 
-Tile will default to `1000` and is measured in milliseconds.
+**Arguments:**
+
+* `time` is an integer representing the duration of the easing in milliseconds (default is 1000).
+* `callback` is a Javascript function that is called when the map has reached its destination.
+
+**Returns** the easey object.
 
 ### var isRunning = ease.running()
 
-Returns `true` or `false` depending on whether easey is currently animating the map.
+**Returns** `true` or `false` depending on whether easey is currently animating the map.
 
 ### ease.stop()
 
 Abort the currently running animation.
+
+**Returns** the easey object.
