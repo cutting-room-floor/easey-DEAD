@@ -1,3 +1,7 @@
+## 2.0.2
+
+* Fix bug breaking `easey.optimal()`
+
 ## 2.0.1
 
 * `from` and `to` are now set to the map center by
