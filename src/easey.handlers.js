@@ -376,18 +376,7 @@
     easey_handlers.DragHandler = function() {
         var handler = {},
             map,
-            prevT = 0,
-            speed = new MM.Point(0, 0);
-            drag = 0.15,
-            removed = false,
-            mouseDownPoint = null,
-            mouseDownTime = 0,
-            mousePoint = null,
-            prevMousePoint = null,
-            moveTime = null,
-            prevMoveTime = null,
-            animatedLastPoint = true,
-            dir = new MM.Point(0, 0);
+            panner;
 
         function focusMap(e) {
             map.parent.focus();
@@ -397,50 +386,100 @@
             if (e.shiftKey || e.button == 2) return;
             MM.addEvent(document, 'mousemove', mouseMove);
             MM.addEvent(document, 'mouseup', mouseUp);
-            mousePoint = prevMousePoint = MM.getMousePoint(e, map);
-            moveTime = prevMoveTime = +new Date();
+            panner.down(e);
             map.parent.style.cursor = 'move';
             return MM.cancelEvent(e);
         }
 
         function mouseMove(e) {
-            if (mousePoint) {
-                if (animatedLastPoint) {
-                    prevMousePoint = mousePoint;
-                    prevMoveTime = moveTime;
-                    animatedLastPoint = false;
-                }
-                mousePoint = MM.getMousePoint(e, map);
-                moveTime = +new Date();
-                return MM.cancelEvent(e);
-            }
+            panner.move(e);
+            return MM.cancelEvent(e);
         }
 
         function mouseUp(e) {
             MM.removeEvent(document, 'mousemove', mouseMove);
             MM.removeEvent(document, 'mouseup', mouseUp);
+            panner.up();
+            map.parent.style.cursor = '';
+            return MM.cancelEvent(e);
+        }
+
+        handler.init = function(x) {
+            map = x;
+            MM.addEvent(map.parent, 'click', focusMap);
+            MM.addEvent(map.parent, 'mousedown', mouseDown);
+            panner = panning();
+        };
+
+        handler.remove = function() {
+            MM.removeEvent(map.parent, 'click', focusMap);
+            MM.removeEvent(map.parent, 'mousedown', mouseDown);
+            panner.up();
+            panner.remove();
+        };
+
+        return handler;
+    };
+
+
+    function panning() {
+
+        var p = {};
+
+        var speed = { x: 0, y: 0 },
+            dir = { x: 0, y: 0 },
+            drag = 0.15,
+            removed = false,
+            nowPoint = null,
+            oldPoint = null,
+            moveTime = null,
+            prevMoveTime = null,
+            animatedLastPoint = true,
+            t,
+            prevT = new Date().getTime();
+
+        p.down = function(e) {
+            nowPoint = oldPoint = MM.getMousePoint(e, map);
+            moveTime = prevMoveTime = +new Date();
+        };
+
+        p.move = function(e) {
+            if (nowPoint) {
+                if (animatedLastPoint) {
+                    oldPoint = nowPoint;
+                    prevMoveTime = moveTime;
+                    animatedLastPoint = false;
+                }
+                nowPoint = MM.getMousePoint(e, map);
+                moveTime = +new Date();
+            }
+        };
+
+        p.up = function() {
             if (+new Date() - prevMoveTime < 50) {
                 dt = Math.max(1, moveTime - prevMoveTime);
-                dir.x = mousePoint.x - prevMousePoint.x;
-                dir.y = mousePoint.y - prevMousePoint.y;
+                dir.x = nowPoint.x - oldPoint.x;
+                dir.y = nowPoint.y - oldPoint.y;
                 speed.x = dir.x / dt;
                 speed.y = dir.y / dt;
             } else {
                 speed.x = 0;
                 speed.y = 0;
             }
-            mousePoint = prevMousePoint = null;
-            moveTime = lastMoveTime = null;
-            map.parent.style.cursor = '';
-            return MM.cancelEvent(e);
-        }
+            nowPoint = oldPoint = null;
+            moveTime = null;
+        };
+
+        p.remove = function() {
+            removed = true;
+        };
 
         function animate(t) {
             var dt = Math.max(1, t - prevT);
-            if (mousePoint && prevMousePoint) {
+            if (nowPoint && oldPoint) {
                 if (!animatedLastPoint) {
-                    dir.x = mousePoint.x - prevMousePoint.x;
-                    dir.y = mousePoint.y - prevMousePoint.y;
+                    dir.x = nowPoint.x - oldPoint.x;
+                    dir.y = nowPoint.y - oldPoint.y;
                     map.panBy(dir.x, dir.y);
                     animatedLastPoint = true;
                 }
@@ -463,23 +502,10 @@
             if (!removed) MM.getFrame(animate);
         }
 
-        handler.init = function(x) {
-            map = x;
-            MM.addEvent(map.parent, 'click', focusMap);
-            MM.addEvent(map.parent, 'mousedown', mouseDown);
-            prevT = new Date().getTime();
-            removed = false;
-            MM.getFrame(animate);
-        };
+        MM.getFrame(animate);
+        return p;
+    }
 
-        handler.remove = function() {
-            MM.removeEvent(map.parent, 'click', focusMap);
-            MM.removeEvent(map.parent, 'mousedown', mouseDown);
-            removed = true;
-        };
-
-        return handler;
-    };
 
     this.easey_handlers = easey_handlers;
 
