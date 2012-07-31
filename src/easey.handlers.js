@@ -5,21 +5,14 @@
     easey_handlers.TouchHandler = function() {
         var handler = {},
             map,
-            prevT = 0,
-            acceleration = 25.0,
-            speed = null,
+            panner,
             maxTapTime = 250,
             maxTapDistance = 30,
             maxDoubleTapDelay = 350,
-            drag = 0.10,
             locations = {},
             taps = [],
             wasPinching = false,
-            nowPoint = null,
-            oldPoint = null,
-            lastMove = null,
             lastPinchCenter = null,
-            dir = new MM.Point(0, 0),
             p0 = new MM.Point(0, 0),
             p1 = new MM.Point(0, 0);
 
@@ -33,35 +26,6 @@
                     delete locations[loc];
                 }
             }
-        }
-
-        function animate(t) {
-            var dt = Math.max(0.001, (t - prevT) / 1000.0);
-            document.getElementById('console').innerHTML = Object.keys(locations).length;
-            if (nowPoint && oldPoint &&
-                (lastMove > (+new Date() - 50))) {
-                dir.x = nowPoint.x - oldPoint.x;
-                dir.y = nowPoint.y - oldPoint.y;
-                speed.x = dir.x;
-                speed.y = dir.y;
-            } else {
-                speed.x -= speed.x * drag;
-                speed.y -= speed.y * drag;
-                if (Math.abs(speed.x) < 0.001) {
-                    speed.x = 0;
-                }
-                if (Math.abs(speed.y) < 0.001) {
-                    speed.y = 0;
-                }
-            }
-            if (speed.x || speed.y) {
-                map.panBy(speed.x, speed.y);
-            } else if (!wasPinching) {
-                clearLocations();
-            }
-            prevT = t;
-            // tick every frame for time-based anim accuracy
-            MM.getFrame(animate);
         }
 
         function updateTouches (e) {
@@ -86,17 +50,18 @@
 
         function touchStartMachine(e) {
             updateTouches(e);
+            panner.down(e.touches[0]);
             return MM.cancelEvent(e);
         }
 
         function touchMoveMachine(e) {
             switch (e.touches.length) {
                 case 1:
-                    onPanning(e.touches[0]);
-                break;
+                    panner.move(e.touches[0]);
+                    break;
                 case 2:
                     onPinching(e);
-                break;
+                    break;
             }
             updateTouches(e);
             return MM.cancelEvent(e);
@@ -125,18 +90,10 @@
             });
         }
 
-        function isTouchable () {
+        function isTouchable() {
             var el = document.createElement('div');
             el.setAttribute('ongesturestart', 'return;');
             return (typeof el.ongesturestart === 'function');
-        }
-
-
-        // Re-transform the actual map parent's CSS transformation
-        function onPanning(touch) {
-            lastMove = +new Date();
-            oldPoint = nowPoint;
-            nowPoint = { x: touch.clientX, y: touch.clientY };
         }
 
         function onPinching(e) {
@@ -190,7 +147,7 @@
                 onPinched(lastPinchCenter);
             }
 
-            oldPoint = nowPoint = null;
+            panner.up();
 
             // Look at each changed touch in turn.
             for (var i = 0; i < e.changedTouches.length; i += 1) {
@@ -254,9 +211,7 @@
             MM.addEvent(map.parent, 'touchend',
                 touchEndMachine);
 
-            prevT = new Date().getTime();
-            speed = { x: 0, y: 0 };
-            MM.getFrame(animate);
+            panner = panning();
         };
 
         handler.remove = function() {
@@ -269,6 +224,7 @@
                 touchMoveMachine);
             MM.removeEvent(map.parent, 'touchend',
                 touchEndMachine);
+            panner.remove();
         };
 
         return handler;
