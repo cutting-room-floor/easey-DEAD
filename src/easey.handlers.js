@@ -49,6 +49,16 @@
         }
 
         function touchStartMachine(e) {
+            MM.addEvent(e.touches[0].target, 'touchmove',
+                touchMoveMachine);
+            MM.addEvent(e.touches[0].target, 'touchend',
+                touchEndMachine);
+            if (e.touches[1]) {
+                MM.addEvent(e.touches[1].target, 'touchmove',
+                    touchMoveMachine);
+                MM.addEvent(e.touches[1].target, 'touchend',
+                    touchEndMachine);
+            }
             updateTouches(e);
             panner.down(e.touches[0]);
             return MM.cancelEvent(e);
@@ -130,16 +140,18 @@
         // When a pinch event ends, round the zoom of the map.
         function onPinched(p) {
             // TODO: easing
-            if (true) {
-                var z = map.getZoom(), // current zoom
-                tz = Math.round(z);     // target zoom
-                map.zoomByAbout(tz - z, p);
-                clearLocations();
-            }
+            var z = map.getZoom(), // current zoom
+            tz = Math.round(z);     // target zoom
+            map.zoomByAbout(tz - z, p);
+            clearLocations();
             wasPinching = false;
         }
 
         function touchEndMachine(e) {
+            MM.removeEvent(e.target, 'touchmove',
+                touchMoveMachine);
+            MM.removeEvent(e.target, 'touchend',
+                touchEndMachine);
             var now = new Date().getTime();
 
             // round zoom if we're done pinching
@@ -206,12 +218,7 @@
 
             MM.addEvent(map.parent, 'touchstart',
                 touchStartMachine);
-            MM.addEvent(map.parent, 'touchmove',
-                touchMoveMachine);
-            MM.addEvent(map.parent, 'touchend',
-                touchEndMachine);
-
-            panner = panning();
+            panner = panning(0.10);
         };
 
         handler.remove = function() {
@@ -220,10 +227,6 @@
 
             MM.removeEvent(map.parent, 'touchstart',
                 touchStartMachine);
-            MM.removeEvent(map.parent, 'touchmove',
-                touchMoveMachine);
-            MM.removeEvent(map.parent, 'touchend',
-                touchEndMachine);
             panner.remove();
         };
 
@@ -378,13 +381,13 @@
     };
 
 
-    function panning() {
+    function panning(drag) {
 
         var p = {};
+        drag = drag || 0.15;
 
         var speed = { x: 0, y: 0 },
             dir = { x: 0, y: 0 },
-            drag = 0.15,
             removed = false,
             nowPoint = null,
             oldPoint = null,
