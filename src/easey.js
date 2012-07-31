@@ -274,7 +274,8 @@
                 };
             }
 
-            var path = function (a, b, t, static_coord) {
+            var oldpath = path;
+            path = function (a, b, t, static_coord) {
                 if (t == 1) return to;
                 var s = t * S,
                     us = u(s),
@@ -292,7 +293,10 @@
                 }
             };
 
-            easey.run(S / V * 1000, callback);
+            easey.run(S / V * 1000, function(m) {
+                path = oldpath;
+                if (callback) callback(m);
+            });
         };
 
         return easey;
