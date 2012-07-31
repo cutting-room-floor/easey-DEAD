@@ -23,8 +23,21 @@
             p0 = new MM.Point(0, 0),
             p1 = new MM.Point(0, 0);
 
+        function focusMap(e) {
+            map.parent.focus();
+        }
+
+        function clearLocations() {
+            for (var loc in locations) {
+                if (locations.hasOwnProperty(loc)) {
+                    delete locations[loc];
+                }
+            }
+        }
+
         function animate(t) {
             var dt = Math.max(0.001, (t - prevT) / 1000.0);
+            document.getElementById('console').innerHTML = Object.keys(locations).length;
             if (nowPoint && oldPoint &&
                 (lastMove > (+new Date() - 50))) {
                 dir.x = nowPoint.x - oldPoint.x;
@@ -43,17 +56,12 @@
             }
             if (speed.x || speed.y) {
                 map.panBy(speed.x, speed.y);
+            } else if (!wasPinching) {
+                clearLocations();
             }
             prevT = t;
             // tick every frame for time-based anim accuracy
             MM.getFrame(animate);
-        }
-
-        // Test whether touches are from the same source -
-        // whether this is the same touchmove event.
-        function sameTouch (event, touch) {
-            return (event && event.touch) &&
-                (touch.identifier == event.touch.identifier);
         }
 
         function updateTouches (e) {
@@ -99,8 +107,8 @@
             if (taps.length &&
                 (tap.time - taps[0].time) < maxDoubleTapDelay) {
                 onDoubleTap(tap);
-            taps = [];
-            return;
+                taps = [];
+                return;
             }
             taps = [tap];
         }
@@ -113,6 +121,7 @@
             .to(map.pointCoordinate(tap).zoomTo(map.getZoom() + 1))
             .path('about').run(200, function() {
                 map.dispatchCallback('zoomed');
+                clearLocations();
             });
         }
 
@@ -149,17 +158,16 @@
             var center = MM.Point.interpolate(p0, p1, 0.5);
 
             map.zoomByAbout(
-                Math.log(e.scale) / Math.LN2 -
-                Math.log(l0.scale) / Math.LN2,
+                Math.log(e.scale) / Math.LN2 - Math.log(l0.scale) / Math.LN2,
                 center);
 
-                // pan from the previous center of these touches
-                prevX = l0.x + (l1.x - l0.x) * 0.5;
-                prevY = l0.y + (l1.y - l0.y) * 0.5;
-                map.panBy(center.x - prevX,
-                          center.y - prevY);
-                          wasPinching = true;
-                          lastPinchCenter = center;
+            // pan from the previous center of these touches
+            prevX = l0.x + (l1.x - l0.x) * 0.5;
+            prevY = l0.y + (l1.y - l0.y) * 0.5;
+            map.panBy(center.x - prevX,
+                      center.y - prevY);
+            wasPinching = true;
+            lastPinchCenter = center;
         }
 
         // When a pinch event ends, round the zoom of the map.
@@ -169,12 +177,14 @@
                 var z = map.getZoom(), // current zoom
                 tz = Math.round(z);     // target zoom
                 map.zoomByAbout(tz - z, p);
+                clearLocations();
             }
             wasPinching = false;
         }
 
         function touchEndMachine(e) {
             var now = new Date().getTime();
+
             // round zoom if we're done pinching
             if (e.touches.length === 0 && wasPinching) {
                 onPinched(lastPinchCenter);
