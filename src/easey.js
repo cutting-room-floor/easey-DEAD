@@ -81,45 +81,67 @@
             return a + ((b - a) * p);
         }
 
-        var paths = {};
+        var paths = {},
+            static_coord = new MM.Coordinate(0, 0, 0);
 
         // The screen path simply moves between
         // coordinates in a non-geographical way
-        paths.screen = function(a, b, t) {
+        paths.screen = function(a, b, t, static_coord) {
             var zoom_lerp = interp(a.zoom, b.zoom, t);
-            var az = a.copy();
-            var bz = b.copy().zoomTo(a.zoom);
-            return (new MM.Coordinate(
-                interp(az.row, bz.row, t),
-                interp(az.column, bz.column, t),
-                az.zoom)).zoomTo(zoom_lerp);
+            if (static_coord) {
+                static_coord.row = interp(
+                    az.row,
+                    b.row * Math.pow(2, a.zoom - b.zoom),
+                    t) * Math.pow(2, zoom_lerp - az.zoom);
+                static_coord.column = interp(
+                    a.column,
+                    b.column * Math.pow(2, a.zoom - b.zoom),
+                    t) * Math.pow(2, zoom_lerp - a.zoom);
+                static_coord.zoom = zoom_lerp;
+            } else {
+                return new MM.Coordinate(
+                    interp(a.row,
+                        b.row * Math.pow(2, a.zoom - b.zoom),
+                        t) * Math.pow(2, zoom_lerp - az.zoom),
+                    interp(az.column,
+                        b.column * Math.pow(2, a.zoom - b.zoom),
+                        t) * Math.pow(2, zoom_lerp - a.zoom),
+                    zoom_lerp);
+            }
         };
-
-        function ptWithCoords(a, b) {
-            // distance from the center of the map
-            var point = new MM.Point(map.dimensions.x / 2, map.dimensions.y / 2);
-            point.x += map.tileSize.x * (b.column - a.column);
-            point.y += map.tileSize.y * (b.row - a.row);
-            return point;
-        }
 
         // The screen path means that the b
         // coordinate should maintain its point on screen
         // throughout the transition, but the map
         // should move to its zoom level
-        paths.about = function(a, b, t) {
+        paths.about = function(a, b, t, static_coord) {
             var zoom_lerp = interp(a.zoom, b.zoom, t);
 
-            var bs = b.copy().zoomTo(a.zoom);
-            var az = a.copy().zoomTo(zoom_lerp);
-            var bz = b.copy().zoomTo(zoom_lerp);
-            var start = ptWithCoords(a, bs);
-            var end = ptWithCoords(az, bz);
+            // center x, center y
+            var cx = map.dimensions.x / 2,
+                cy = map.dimensions.y / 2,
+                // tilesize
+                tx = map.tileSize.x,
+                ty = map.tileSize.y;
 
-            az.column -= (start.x - end.x) / map.tileSize.x;
-            az.row -= (start.y - end.y) / map.tileSize.y;
+            var startx = cx + tx * ((b.column * Math.pow(2, a.zoom - b.zoom)) - a.column);
+            var starty = cy + ty * ((b.row  * Math.pow(2, a.zoom - b.zoom)) - a.row);
 
-            return az;
+            var endx = cx + tx * ((b.column * Math.pow(2, zoom_lerp - b.zoom)) -
+                (a.column * Math.pow(2, zoom_lerp - a.zoom)));
+            var endy = cy + ty * ((b.row * Math.pow(2, zoom_lerp - b.zoom)) - (a.row *
+                Math.pow(2, zoom_lerp - a.zoom)));
+
+            if (static_coord) {
+                static_coord.column = (a.column * Math.pow(2, zoom_lerp - a.zoom)) - ((startx - endx) / tx);
+                static_coord.row = (a.row * Math.pow(2, zoom_lerp - a.zoom)) - ((starty - endy) / ty);
+                static_coord.zoom = zoom_lerp;
+            } else {
+                return new MM.Coordinate(
+                    (a.column * Math.pow(2, zoom_lerp - a.zoom)) - ((startx - endx) / tx),
+                    (a.row * Math.pow(2, zoom_lerp - a.zoom)) - ((starty - endy) / ty),
+                    zoom_lerp);
+            }
         };
 
         var path = paths.screen;
@@ -164,12 +186,14 @@
                     return (abortCallback = undefined);
                 } else if (delta > time) {
                     running = false;
-                    map.coordinate = path(from, to, 1);
+                    path(from, to, 1, static_coord);
+                    map.coordinate = static_coord;
                     to = from = undefined;
                     map.draw();
                     if (callback) return callback(map);
                 } else {
-                    map.coordinate = path(from, to, easing(delta / time));
+                    path(from, to, easing(delta / time), static_coord);
+                    map.coordinate = static_coord;
                     map.draw();
                     MM.getFrame(tick);
                 }
@@ -250,14 +274,22 @@
                 };
             }
 
-            var path = function (a, b, t) {
+            var path = function (a, b, t, static_coord) {
                 if (t == 1) return to;
                 var s = t * S,
                     us = u(s),
                     z = a.zoom + (Math.log(w0/w(s)) / Math.LN2),
                     x = interp(c0.x, c1.x, us/u1 || 1),
                     y = interp(c0.y, c1.y, us/u1 || 1);
-                return new MM.Coordinate(y, x, 0).zoomTo(z);
+
+                if (static_coord) {
+                    static_coord.column = y * power;
+                    static_coord.row = x * power;
+                    static_coord.zoom = z;
+                } else {
+                    var power = Math.pow(2, z);
+                    return new MM.Coordinate(y * power, x * power, z);
+                }
             };
 
             easey.run(S / V * 1000, callback);

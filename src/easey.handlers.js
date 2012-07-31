@@ -18,10 +18,12 @@
             nowPoint = null,
             oldPoint = null,
             lastMove = null,
-            lastPinchCenter = null;
+            lastPinchCenter = null,
+            dir = new MM.Point(0, 0),
+            p0 = new MM.Point(0, 0),
+            p1 = new MM.Point(0, 0);
 
         function animate(t) {
-            var dir = { x: 0, y: 0 };
             var dt = Math.max(0.001, (t - prevT) / 1000.0);
             if (nowPoint && oldPoint &&
                 (lastMove > (+new Date() - 50))) {
@@ -131,9 +133,11 @@
         function onPinching(e) {
             // use the first two touches and their previous positions
             var t0 = e.touches[0],
-            t1 = e.touches[1],
-            p0 = new MM.Point(t0.clientX, t0.clientY),
-            p1 = new MM.Point(t1.clientX, t1.clientY),
+                t1 = e.touches[1];
+            p0.x = t0.clientX;
+            p0.y = t0.clientY;
+            p1.x = t1.clientX;
+            p1.y = t1.clientY;
             l0 = locations[t0.identifier],
             l1 = locations[t1.identifier];
 
@@ -150,10 +154,10 @@
                 center);
 
                 // pan from the previous center of these touches
-                var prevCenter = MM.Point.interpolate(l0, l1, 0.5);
-
-                map.panBy(center.x - prevCenter.x,
-                          center.y - prevCenter.y);
+                prevX = l0.x + (l1.x - l0.x) * 0.5;
+                prevY = l0.y + (l1.y - l0.y) * 0.5;
+                map.panBy(center.x - prevX,
+                          center.y - prevY);
                           wasPinching = true;
                           lastPinchCenter = center;
         }
@@ -363,7 +367,7 @@
         var handler = {},
             map,
             prevT = 0,
-            speed = null,
+            speed = new MM.Point(0, 0);
             drag = 0.15,
             removed = false,
             mouseDownPoint = null,
@@ -372,7 +376,8 @@
             prevMousePoint = null,
             moveTime = null,
             prevMoveTime = null,
-            animatedLastPoint = true;
+            animatedLastPoint = true,
+            dir = new MM.Point(0, 0);
 
         function focusMap(e) {
             map.parent.focus();
@@ -406,7 +411,6 @@
             MM.removeEvent(document, 'mouseup', mouseUp);
             if (+new Date() - prevMoveTime < 50) {
                 dt = Math.max(1, moveTime - prevMoveTime);
-                var dir = { x: 0, y: 0 };
                 dir.x = mousePoint.x - prevMousePoint.x;
                 dir.y = mousePoint.y - prevMousePoint.y;
                 speed.x = dir.x / dt;
@@ -422,7 +426,6 @@
         }
 
         function animate(t) {
-            var dir = { x: 0, y: 0 };
             var dt = Math.max(1, t - prevT);
             if (mousePoint && prevMousePoint) {
                 if (!animatedLastPoint) {
@@ -455,7 +458,6 @@
             MM.addEvent(map.parent, 'click', focusMap);
             MM.addEvent(map.parent, 'mousedown', mouseDown);
             prevT = new Date().getTime();
-            speed = { x: 0, y: 0 };
             removed = false;
             MM.getFrame(animate);
         };
