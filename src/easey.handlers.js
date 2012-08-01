@@ -40,6 +40,7 @@
                     locations[t.identifier] = {
                         scale: e.scale,
                         startPos: { x: t.clientX, y: t.screenY },
+                        startZoom: map.zoom(),
                         x: t.clientX,
                         y: t.clientY,
                         time: new Date().getTime()
@@ -138,11 +139,11 @@
         }
 
         // When a pinch event ends, round the zoom of the map.
-        function onPinched(p) {
-            // TODO: easing
+        function onPinched(touch) {
             var z = map.getZoom(), // current zoom
-            tz = Math.round(z);     // target zoom
-            map.zoomByAbout(tz - z, p);
+                tz = locations[touch.identifier].startZoom > z ? Math.floor(z) : Math.ceil(z);
+            easey().map(map).point(lastPinchCenter).zoom(tz)
+                .path('about').run(300);
             clearLocations();
             wasPinching = false;
         }
@@ -156,7 +157,7 @@
 
             // round zoom if we're done pinching
             if (e.touches.length === 0 && wasPinching) {
-                onPinched(lastPinchCenter);
+                onPinched(e.changedTouches[0]);
             }
 
             panner.up();
