@@ -90,9 +90,9 @@
             var zoom_lerp = interp(a.zoom, b.zoom, t);
             if (static_coord) {
                 static_coord.row = interp(
-                    az.row,
+                    a.row,
                     b.row * Math.pow(2, a.zoom - b.zoom),
-                    t) * Math.pow(2, zoom_lerp - az.zoom);
+                    t) * Math.pow(2, zoom_lerp - a.zoom);
                 static_coord.column = interp(
                     a.column,
                     b.column * Math.pow(2, a.zoom - b.zoom),
@@ -102,8 +102,8 @@
                 return new MM.Coordinate(
                     interp(a.row,
                         b.row * Math.pow(2, a.zoom - b.zoom),
-                        t) * Math.pow(2, zoom_lerp - az.zoom),
-                    interp(az.column,
+                        t) * Math.pow(2, zoom_lerp - a.zoom),
+                    interp(a.column,
                         b.column * Math.pow(2, a.zoom - b.zoom),
                         t) * Math.pow(2, zoom_lerp - a.zoom),
                     zoom_lerp);
