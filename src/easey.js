@@ -147,7 +147,8 @@
         var path = paths.screen;
 
         easey.t = function(t) {
-            map.coordinate = path(from, to, easing(t));
+            path(from, to, easing(t), static_coord);
+            map.coordinate = static_coord;
             map.draw();
             return easey;
         };
