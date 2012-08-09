@@ -4,7 +4,7 @@ Easing is moving from one point or zoom to another in a fluid motion, instead of
 place to place. It's useful for map-based storytelling, since users get a better idea of geographical
 distance.
 
-## var ease = mapbox.ease()
+## mapbox.ease()
 
 **Returns** an easey object, which has the following methods:
 
@@ -40,6 +40,15 @@ Set the zoom level of the `to` coordinate that easey is easing to.
 
 **Returns** the easey object.
 
+### ease.optimal([V] [,rho] [,callback])
+
+Eases to `from` in the smoothest way possible, automatically choosing run time based on distance. The easing zooms out and in to optimize for the shortest easing time and the slowest percieved speed. The optional arguments are as defined in *[Smooth and efficient zooming and panning](http://www.cs.ubc.ca/~tmm/courses/cpsc533c-04-spr/readings/zoompan.pdf)*.
+
+**Arguments:**
+
+* `V` inversely affects the speed (default is 0.9) 
+* `rho` affects the sensitivity of zooming in and out (default 1.42)
+* `callback` is a function that gets called after the animation completes.
 
 ### ease.t(value)
 
