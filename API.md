@@ -108,7 +108,7 @@ Start an _animated ease_. Both parameters are optional.
 
 **Returns** the easey object.
 
-### var isRunning = ease.running()
+### ease.running()
 
 **Returns** `true` or `false` depending on whether easey is currently animating the map.
 
