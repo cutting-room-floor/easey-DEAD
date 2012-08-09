@@ -304,4 +304,6 @@
     };
 
     this.easey = easey;
+    if (typeof this.mapbox == 'undefined') this.mapbox = {};
+    this.mapbox.ease = easey;
 })(this, MM);
