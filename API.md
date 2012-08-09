@@ -8,6 +8,16 @@ distance.
 
 **Returns** an easey object, which has the following methods:
 
+### ease.map(map)
+
+Specify the map to be used.
+
+**Arguments:**
+
+* `map` is an instance of `mapbox.map()` or `MM.Map`
+
+**Returns** the easey object.
+
 ### ease.from(coord)
 
 Set the starting coordinate for the easing. You don't usually need to call this, because easings default to the current coordinate.
