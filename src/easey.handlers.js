@@ -186,7 +186,6 @@
                     // close in space, but not in time: a hold
                     pos.end = now;
                     pos.duration = time;
-                    onHold(pos);
                 } else {
                     // close in both time and space: a tap
                     pos.time = now;
