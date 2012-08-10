@@ -60,6 +60,18 @@ Eases to `from` in the smoothest way possible, automatically choosing run time b
 * `rho` affects the sensitivity of zooming in and out (default 1.42)
 * `callback` is a function that gets called after the animation completes.
 
+**Returns** the easey object.
+
+### ease.location(location)
+
+Sets the `to` coordinate to the provided location.
+
+**Arguments:**
+
+* `location` is an object with `lat` and `lon` properties, or an instance of `MM.Location`.
+
+**Returns** the easey object.
+
 ### ease.t(value)
 
 Set the map to a specific point in the easing.
