@@ -186,6 +186,7 @@
                     abortCallback();
                     return (abortCallback = undefined);
                 } else if (delta > time) {
+                    if (to.zoom != from.zoom) map.dispatchCallback('zoomed', to.zoom - from.zoom);
                     running = false;
                     path(from, to, 1, static_coord);
                     map.coordinate = static_coord;
