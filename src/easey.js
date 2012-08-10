@@ -277,19 +277,26 @@
 
             var oldpath = path;
             path = function (a, b, t, static_coord) {
-                if (t == 1) return to;
+                if (t == 1) {
+                    if (static_coord) {
+                        static_coord.row = to.row;
+                        static_coord.column = to.column;
+                        static_coord.zoom = to.zoom;
+                    }
+                    return to;
+                }
                 var s = t * S,
                     us = u(s),
                     z = a.zoom + (Math.log(w0/w(s)) / Math.LN2),
                     x = interp(c0.x, c1.x, us/u1 || 1),
                     y = interp(c0.y, c1.y, us/u1 || 1);
 
+                var power = Math.pow(2, z);
                 if (static_coord) {
-                    static_coord.column = y * power;
-                    static_coord.row = x * power;
+                    static_coord.row = y * power;
+                    static_coord.column = x * power;
                     static_coord.zoom = z;
                 } else {
-                    var power = Math.pow(2, z);
                     return new MM.Coordinate(y * power, x * power, z);
                 }
             };
