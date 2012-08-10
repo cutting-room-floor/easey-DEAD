@@ -1,3 +1,9 @@
+## 2.0.3
+
+* Dispatches "zoomed" when zoom level changes
+* Touch handler now able to pinch more than one zoom level
+* Several optimizations
+
 ## 2.0.2
 
 * Fix bug breaking `easey.optimal()`
