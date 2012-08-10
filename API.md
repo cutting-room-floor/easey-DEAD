@@ -134,8 +134,12 @@ Start an _animated ease_. Both parameters are optional.
 
 **Returns** `true` or `false` depending on whether easey is currently animating the map.
 
-### ease.stop()
+### ease.stop([callback])
 
 Abort the currently running animation.
+
+**Arguments:**
+
+* `callback` is a function to be called after the previous animation has been successfully stopped.
 
 **Returns** the easey object.
