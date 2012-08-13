@@ -218,7 +218,7 @@
 
             MM.addEvent(map.parent, 'touchstart',
                 touchStartMachine);
-            panner = panning(0.10);
+            panner = panning(map, 0.10);
         };
 
         handler.remove = function() {
@@ -367,7 +367,7 @@
             map = x;
             MM.addEvent(map.parent, 'click', focusMap);
             MM.addEvent(map.parent, 'mousedown', mouseDown);
-            panner = panning();
+            panner = panning(map);
         };
 
         handler.remove = function() {
@@ -381,7 +381,7 @@
     };
 
 
-    function panning(drag) {
+    function panning(map, drag) {
 
         var p = {};
         drag = drag || 0.15;
