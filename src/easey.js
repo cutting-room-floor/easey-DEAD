@@ -213,6 +213,11 @@
         // Model described in section 3, equations 1 through 5
         // Derived equation (9) of optimal path implemented below
         easey.optimal = function(V, rho, callback) {
+
+            if (running) return easey.stop(function() {
+                easey.optimal(V, rho, callback);
+            });
+
             // Section 6 describes user testing of these tunable values
             V = V || 0.9;
             rho = rho || 1.42;
