@@ -1,3 +1,11 @@
+### 2.0.6
+
+* Touch handlers now work on Android
+
+## 2.0.5
+
+* .optimal() properly handlers interrupting running animations
+
 ## 2.0.4
 
 * Remove unused onHold function
