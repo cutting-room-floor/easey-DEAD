@@ -50,6 +50,7 @@
         }
 
         function touchStartMachine(e) {
+            if (!panner) panner = panning(map, 0.10);
             MM.addEvent(e.touches[0].target, 'touchmove',
                 touchMoveMachine);
             MM.addEvent(e.touches[0].target, 'touchend',
@@ -99,12 +100,6 @@
                 map.dispatchCallback('zoomed');
                 clearLocations();
             });
-        }
-
-        function isTouchable() {
-            var el = document.createElement('div');
-            el.setAttribute('ongesturestart', 'return;');
-            return (typeof el.ongesturestart === 'function');
         }
 
         function onPinching(e) {
@@ -212,19 +207,13 @@
 
         handler.init = function(x) {
             map = x;
-            // Fail early if this isn't a touch device.
-            // TODO: move to add fn
-            if (!isTouchable()) return false;
 
             MM.addEvent(map.parent, 'touchstart',
                 touchStartMachine);
-            panner = panning(map, 0.10);
         };
 
         handler.remove = function() {
-            // Fail early if this isn't a touch device.
-            if (!isTouchable()) return false;
-
+            if (!panner) return;
             MM.removeEvent(map.parent, 'touchstart',
                 touchStartMachine);
             panner.remove();
