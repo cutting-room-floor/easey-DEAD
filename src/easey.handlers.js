@@ -39,7 +39,7 @@
                 } else {
                     locations[t.identifier] = {
                         scale: e.scale,
-                        startPos: { x: t.clientX, y: t.screenY },
+                        startPos: { x: t.clientX, y: t.clientY },
                         startZoom: map.zoom(),
                         x: t.clientX,
                         y: t.clientY,
