@@ -33,13 +33,6 @@
             }
         }
 
-        function distanceTo(p1, p2) {
-            var x = p2.x - p1.x,
-                y = p2.y - p1.y;
-
-            return Math.sqrt(x * x + y * y);
-        }
-
         function updateTouches (e) {
             var eventScale = (e.scale === undefined) ? scale : e.scale;
 
@@ -85,7 +78,7 @@
                         _p0.y = _t0.clientY;
                         _p1.x = _t1.clientX;
                         _p1.y = _t1.clientY;
-                        startDistance = distanceTo(_p0, _p1);
+                        startDistance = MM.Point.distance(_p0, _p1);
                 }
             }
             updateTouches(e);
@@ -148,7 +141,7 @@
             var center = MM.Point.interpolate(p0, p1, 0.5);
 
             // e.scale isn't available to Android or Windows 7 browsers
-            var eventScale = (e.scale === undefined) ? scale = distanceTo(p0, p1) / startDistance : e.scale;
+            var eventScale = (e.scale === undefined) ? scale = MM.Point.distance(p0, p1) / startDistance : e.scale;
 
             map.zoomByAbout(
                 Math.log(eventScale) / Math.LN2 - Math.log(l0.scale) / Math.LN2,
