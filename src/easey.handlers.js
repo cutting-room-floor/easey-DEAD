@@ -68,7 +68,7 @@
                 MM.addEvent(e.touches[1].target, 'touchend',
                     touchEndMachine);
 
-                if(e.scale === undefined) {
+                if (e.scale === undefined) {
                     var _t0 = e.touches[0],
                         _t1 = e.touches[1],
                         _p0 = new MM.Point(0, 0),
