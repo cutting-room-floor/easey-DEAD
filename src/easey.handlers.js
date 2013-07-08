@@ -3,7 +3,7 @@
     var easey_handlers = {};
 
     easey_handlers.TouchHandler = function() {
-        var handler = {},
+        var handler = { id : 'TouchHandler' },
             map,
             panner,
             maxTapTime = 250,
@@ -247,7 +247,7 @@
     };
 
     easey_handlers.DoubleClickHandler = function() {
-        var handler = {},
+        var handler = { id : 'DoubleClickHandler' },
             map;
 
         function doubleClick(e) {
@@ -278,7 +278,7 @@
     };
 
     easey_handlers.MouseWheelHandler = function() {
-        var handler = {},
+        var handler = { id : 'MouseWheelHandler' },
             map,
             _zoomDiv,
             ea = easey(),
@@ -346,7 +346,7 @@
     };
 
     easey_handlers.DragHandler = function() {
-        var handler = {},
+        var handler = { id : 'DragHandler' },
             map,
             panner;
 
@@ -429,7 +429,7 @@
 
         p.up = function() {
             if (+new Date() - prevMoveTime < 50) {
-                dt = Math.max(1, moveTime - prevMoveTime);
+                var dt = Math.max(1, moveTime - prevMoveTime);
                 dir.x = nowPoint.x - oldPoint.x;
                 dir.y = nowPoint.y - oldPoint.y;
                 speed.x = dir.x / dt;
